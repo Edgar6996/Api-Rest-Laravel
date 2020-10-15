@@ -1,19 +1,54 @@
 <?php
 
+use App\Core\Tools\ApiMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
+require_once "api-routes/auth.routes.php";
+
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+
+    # Obtener el usuario:
+    $usuarioActual = Auth::user();
+
+    $idUsuarioActual = Auth::id();
+
+    # Saber si el usuario actual esta logeado
+    $esInvitado =  Auth::guest();
+
+    $res = new ApiMessage();
+
+    $res->setData([
+        'invitado' => $esInvitado
+    ]);
+
+    return $res->send();
+});
+
+
+
+
+
+
+
+
+
+
+Route::get('prueba', function () {
+
+    $res = new ApiMessage();
+
+    # Saber si el usuario actual esta logeado
+    $esInvitado =  Auth::guest();
+
+    $res = new ApiMessage();
+
+    $res->setData([
+        'invitado' => $esInvitado
+    ]);
+
+    return $res->send();
+
+
 });
