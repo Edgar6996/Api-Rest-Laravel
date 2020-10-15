@@ -27,7 +27,7 @@ class AuthController extends Controller
 
         $login = $request->input('user');
         // Comprobar si el input coincide con el formato de E-mail
-        $field = 'email';
+        $field = 'username';
 
         // $credentials = request(['user', 'password']);
         $credentials = [
