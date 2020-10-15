@@ -13,7 +13,7 @@ class BecadoControllers extends Controller
      */
     public function index()
     {
-        //
+        return 'index';
     }
 
     /**
@@ -24,7 +24,8 @@ class BecadoControllers extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return 'store';
+        
     }
 
     /**
@@ -35,7 +36,7 @@ class BecadoControllers extends Controller
      */
     public function show($id)
     {
-        //
+        return "show $id";
     }
 
     /**
@@ -47,7 +48,7 @@ class BecadoControllers extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        return "update $id";
     }
 
     /**
@@ -58,6 +59,6 @@ class BecadoControllers extends Controller
      */
     public function destroy($id)
     {
-        //
+        return "delete $id";
     }
 }
