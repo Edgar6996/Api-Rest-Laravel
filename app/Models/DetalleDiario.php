@@ -11,7 +11,7 @@ class DetalleDiario extends Model
 {
     use HasFactory;
 
-    protected $table = 'detallediarios';
+    protected $table = 'detalle_diarios';
 
     public function becado(){
 
