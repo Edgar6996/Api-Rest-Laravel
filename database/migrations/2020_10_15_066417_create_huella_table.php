@@ -26,6 +26,8 @@ class CreateHuellaTable extends Migration
 
             $table->foreign('becado_id')->references('id')->on('becados');
         });
+
+        DB::statement("ALTER TABLE huellas CHANGE COLUMN img_huella img_huella LONGBLOB NOT NULL;");
     }
 
     /**
