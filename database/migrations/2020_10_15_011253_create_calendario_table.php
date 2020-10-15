@@ -39,6 +39,7 @@ class CreateCalendarioTable extends Migration
             $table->timestamps();
 
             # Definir relacion con tabla becados
+            $table->foreign('id_becado')->references('id')->on('becados');
         });
     }
 
