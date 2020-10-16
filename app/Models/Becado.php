@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 class Becado extends Model
 {
     use HasFactory;
-
+    protected $fillable = ['dni', 'nombres', 'apellidos', 'email', 'raciones_dia', 'raciones_noche', 'categoria'];
     #nombre de la tabla que hace referencia
     protected $table = 'becados';
 
