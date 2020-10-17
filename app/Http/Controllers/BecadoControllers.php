@@ -26,7 +26,7 @@ class BecadoControllers extends Controller
         # Pensar en agregar opcion de filtro
         $perPage = $request->get('per_page',10) ; // items por pagina
 
-        $consulta = Becado::activos();
+        $consulta = Becado::query();
 
 
         $lista = $consulta->paginate($perPage);
@@ -126,13 +126,11 @@ class BecadoControllers extends Controller
         $res = new ApiMessage();
 
 
-
         # Con load, le podemos indicar que nos envie una relacion
         $becado->load('calendario');
 
         // Carga el dato en el response
         $res->setData($becado);
-
 
         // Envia el response
         return $res->send();
@@ -180,7 +178,7 @@ class BecadoControllers extends Controller
         $res = new ApiMessage();
 
         # obtengo el becacdo
-        $becado = Becado::activos()->find($id);
+        $becado = Becado::find($id);
 
         if(!$becado){
             return $res->setCode(409)->setMessage("El becado ya esta deshabilitado.")->send();
