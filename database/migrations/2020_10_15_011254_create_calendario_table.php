@@ -13,9 +13,9 @@ class CreateCalendarioTable extends Migration
      */
     public function up()
     {
-        Schema::create('calendario', function (Blueprint $table) {
+        Schema::create('calendarios', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger("id_becado");
+            $table->unsignedBigInteger("becado_id");
 
             # Cada uno de los siguientes campos se usara para indicar la cantidad de raciones que consumira
             // un becado por dia y turno
@@ -39,7 +39,7 @@ class CreateCalendarioTable extends Migration
             $table->timestamps();
 
             # Definir relacion con tabla becados
-            $table->foreign('id_becado')->references('id')->on('becados');
+            $table->foreign('becado_id')->references('id')->on('becados');
         });
     }
 
@@ -50,6 +50,6 @@ class CreateCalendarioTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('calendario');
+        Schema::dropIfExists('calendarios');
     }
 }

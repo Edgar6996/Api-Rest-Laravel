@@ -24,12 +24,10 @@ class BecadosRequest extends FormRequest
     public function rules()
     {
         return [
-            'dni' => 'required|numeric',
-            'nombres' => 'required|string',
-            'apellidos' => 'required|string',
-            'email' => 'required|email',
-            'raciones_dia' => 'required',
-            'raciones_noche' => 'required'
+            'dni' => 'required|numeric|unique:becados',
+            'nombres' => 'required|string|max:255',
+            'apellidos' => 'required|string|max:255',
+            'email' => 'required|email|unique:users',
         ];
     }
 }
