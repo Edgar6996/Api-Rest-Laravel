@@ -143,7 +143,7 @@ class BecadoControllers extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateBecadoRequest $request, $id)
     {
         $res = new ApiMessage();
         $datos = $request->validated();
