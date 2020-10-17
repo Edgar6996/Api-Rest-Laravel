@@ -75,7 +75,12 @@ class Becado extends Model
 
 
 
-
+    protected static function booted()
+    {
+        static::addGlobalScope('activos', function (Builder $query) {
+            $query->where('estado', '=', EstadoBecados::ACTIVO);
+        });
+    }
 
 
 
