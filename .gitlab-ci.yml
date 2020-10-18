@@ -5,8 +5,9 @@ stages:
 deploy_testing:
   stage: deploy
   script:
-    - wget -nv -O log.txt "http://comedor.uncaus.edu.ar/dev-server/ci-update.php"
+    - wget -nv -O log.txt "$SERVER_UPDATE_URL"
     - cat log.txt
+  environment: staging
   only:
     - develop
 
