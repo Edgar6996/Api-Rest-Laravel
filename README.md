@@ -1,4 +1,4 @@
-# Comedor Project
+# Comedor Server Project
 ### Comandos comunes
 
 ##### Actualizar dependencias
