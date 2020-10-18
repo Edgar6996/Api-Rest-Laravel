@@ -1,0 +1,21 @@
+image: busybox
+stages:
+  - deploy
+
+deploy_testing:
+  stage: deploy
+  script:
+    - wget -nv -O log.txt "http://comedor.uncaus.edu.ar/dev-server/ci-update.php"
+    - cat log.txt
+  only:
+    - develop
+
+# Enable this when production server up
+
+#deploy_production:
+#  stage: deploy
+#  script:
+#    - wget -nv -O log.txt ""
+#    - cat log.txt
+#  only:
+#    - master
