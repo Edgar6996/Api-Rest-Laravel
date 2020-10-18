@@ -1,5 +1,6 @@
-# Cocina Project
+# Comedor Project
 ### Comandos comunes
+
 ##### Actualizar dependencias
 > `composer update`    
 
