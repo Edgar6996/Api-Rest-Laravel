@@ -1,0 +1,22 @@
+image: busybox
+stages:
+  - deploy
+
+deploy_testing:
+  stage: deploy
+  script:
+    - wget -nv -O log.txt "$SERVER_UPDATE_URL"
+    - cat log.txt
+  environment: staging
+  only:
+    - develop
+
+# Enable this when production server up
+
+#deploy_production:
+#  stage: deploy
+#  script:
+#    - wget -nv -O log.txt ""
+#    - cat log.txt
+#  only:
+#    - master
