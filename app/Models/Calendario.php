@@ -18,9 +18,9 @@ class Calendario extends Model
     #nombre de la tabla que hace referenciac
     protected $table = 'calendarios';
 
-   protected $guarded  = [
+    protected $guarded  = [
        'id', "created_at", 'updated_at'
-   ];
+    ];
 
     public function becado(){
     	return $this->hasOne(Becado::class, 'becado_id');
