@@ -33,7 +33,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 
 
+### RUTAS TEMPORALES/DE PRUEBA ###
 
+Route::get('users',[\App\Http\Controllers\Users\UsersController::class, "index"]);
 
 Route::post('prueba',[\App\Http\Controllers\EjemploController::class,"storeBlob"]);
 Route::get('prueba', function () {
