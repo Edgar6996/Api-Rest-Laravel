@@ -35,7 +35,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 
 
-
+Route::post('prueba',[\App\Http\Controllers\EjemploController::class,"storeBlob"]);
 Route::get('prueba', function () {
 
     $res = new ApiMessage();
