@@ -29,7 +29,6 @@ class UpdateBecadoRequest extends FormRequest
             'nombres' => 'required|string|max:30',
             'apellidos' => 'required|string|max:50',
             'email' => 'required|email|unique:users',
-
         ];
     }
 }
