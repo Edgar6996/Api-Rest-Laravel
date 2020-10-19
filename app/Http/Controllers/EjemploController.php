@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Core\Tools\ApiMessage;
+use App\Models\Becado;
+use App\Models\Huella;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -109,5 +111,50 @@ class EjemploController extends Controller
     }
 
 
+
+    public function storeBlob(Request $request )
+    {
+        $res = new ApiMessage($request);
+
+        $item = new Huella();
+        $item->becado_id = 6;
+        $item->img_width = 400;
+        $item->img_height = 400;
+
+
+        if ($request->hasFile('file')) {
+            $res->setMessage("Has file!");
+
+            $file = $request->file('file');
+            $data = file_get_contents($file->getRealPath());
+
+            $item->size_template = $file->getSize();
+            $item->template_huella = $data;
+
+
+//            $item->img_huella = $data2;
+            try {
+                $item->saveOrFail();
+                $res->setData([
+                    'size' => $file->getSize(),
+                    'id' => $item->id
+                ]);
+            } catch (\Throwable $e) {
+                dd($e->getMessage());
+                $res->addError($e->getMessage());
+                $res->setMessage("Error:". $e->getMessage());
+                $res->setCode(409);
+            }
+
+
+
+
+
+        }else{
+            $res->setMessage("File not exists!");
+        }
+
+        return $res->send();
+    }
 
 }

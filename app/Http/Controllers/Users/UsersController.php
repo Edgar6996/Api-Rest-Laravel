@@ -60,6 +60,7 @@ class UsersController extends Controller
             # obtenemos el archivo 'image' desde la request
             $img = $request->file('image');
 
+
             # Opcionalmente, podríamos redimencionar las imágenes
 //            Image::make($img)
 //                ->resize(300,300)
