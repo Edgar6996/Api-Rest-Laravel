@@ -10,6 +10,8 @@ use Laravel\Passport\HasApiTokens;
 
 /**
  * Class User
+ * @property string password
+ * @property string name
  * @package App\Models
  * @mixin \Eloquent
  */
