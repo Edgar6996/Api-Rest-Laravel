@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 require_once "api-routes/auth.routes.php";
 require_once "api-routes/becados.routes.php"; // Rutas becado requeridas
+require_once "api-routes/calendario.routes.php"; // Rutas calendario becado requeridas
 
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
