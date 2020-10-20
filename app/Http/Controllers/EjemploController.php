@@ -112,48 +112,48 @@ class EjemploController extends Controller
 
 
 
-    public function storeBlob(Request $request )
+    public function storeBlob(Request $request , $id_becado = 5)
     {
         $res = new ApiMessage($request);
 
-        $item = new Huella();
-        $item->becado_id = 6;
-        $item->img_width = 400;
-        $item->img_height = 400;
+        $becado = Becado::findOrFail($id_becado);
+        $huella = $becado->huella()->firstOrFail();
 
+        if($request->hasFile('template_huella')){
+            #... guardamos la template
+            $file = $request->file('template_huella');
+            $data = file_get_contents($file->getRealPath());
+            $huella->template_huella = $data;
+        }
 
-        if ($request->hasFile('file')) {
+        if ($request->hasFile('img_huella')) {
             $res->setMessage("Has file!");
 
             $file = $request->file('file');
             $data = file_get_contents($file->getRealPath());
 
             $item->size_template = $file->getSize();
-            $item->template_huella = $data;
-
-
-//            $item->img_huella = $data2;
-            try {
-                $item->saveOrFail();
-                $res->setData([
-                    'size' => $file->getSize(),
-                    'id' => $item->id
-                ]);
-            } catch (\Throwable $e) {
-                dd($e->getMessage());
-                $res->addError($e->getMessage());
-                $res->setMessage("Error:". $e->getMessage());
-                $res->setCode(409);
-            }
-
-
-
-
-
-        }else{
-            $res->setMessage("File not exists!");
+            $item->img_huella = $data;
         }
 
+
+
+        # Guardamos los cambios
+        try {
+            $item->saveOrFail();
+
+            $becado->checkRegistroCompletado();
+
+            $res->setData([
+                'size' => $file->getSize(),
+                'id' => $item->id
+            ]);
+        } catch (\Throwable $e) {
+            dd($e->getMessage());
+            $res->addError($e->getMessage());
+            $res->setMessage("Error:". $e->getMessage());
+            $res->setCode(409);
+        }
         return $res->send();
     }
 
