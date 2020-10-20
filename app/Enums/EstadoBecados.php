@@ -8,5 +8,5 @@ final class EstadoBecados extends Enum
 {
     const ACTIVO =   1;
     const DESHABILITADO =   0;
-    const EN_PROCESO = 2;
+    const REGISTRO_INCOMPLETO = 2;
 }

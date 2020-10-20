@@ -30,6 +30,10 @@ class BecadosRequest extends FormRequest
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
+
+            'size_template' => 'required|numeric',
+            'img_width' => 'required|numeric',
+            'img_height' => 'required|numeric'
         ];
 
         $dias = [

@@ -14,8 +14,14 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class Becado
+ *
  * @package App\Models
  * @mixin \Eloquent
+ *
+ *
+ * @property int|EstadoBecados estado
+ * @property string|null foto: Link de la foto del becado
+ *
  */
 class Becado extends Model
 {
@@ -31,7 +37,7 @@ class Becado extends Model
     # Definimos los atributos con valores por defecto
     protected $attributes = [
         'categoria' => CategoriasBecados::BECADO,
-        'estado' => EstadoBecados::ACTIVO,
+        'estado' => EstadoBecados::REGISTRO_INCOMPLETO,
     ];
 
     # Indicamos los atributos que no se deben enviar al cliente
@@ -55,6 +61,9 @@ class Becado extends Model
         return $this->hasOne(Calendario::class, 'becado_id');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne|Huella
+     */
     public function huella(){
         return $this->hasOne(Huella::class, 'becado_id');
     }
@@ -73,15 +82,48 @@ class Becado extends Model
     }
 
 
-
-
+    /**
+     * Esta funcion se ejecuta cuando se crea una instancia del modelo,
+     * similar al constructor de una clase
+     */
     protected static function booted()
     {
+        # Definimos un Global Scope, un filtro que se aplicara en todas las consultas sobre Becados
         static::addGlobalScope('activos', function (Builder $query) {
-            $query->where('estado', '=', EstadoBecados::ACTIVO);
+            // Por defecto, ignoramos a todos los que estan DESHABILITADOS
+            $query->whereIn('estado', [EstadoBecados::ACTIVO, EstadoBecados::REGISTRO_INCOMPLETO]);
         });
     }
 
+    /**
+     * Esta funcion verifica si se completó el registro de el becado, cuando está en estado REGISTRO_INCOMPLETO
+     *
+     * @return bool Indica si se activó el becado o no.
+     */
+    public function checkRegistroCompletado(): bool
+    {
+        #. Primero verificamos si ya no está activo
+        if($this->estado === EstadoBecados::ACTIVO){
+            return  true; // ya esta ACTIVO
+        }
 
+        # Para completar el registro, debe tener una foto, y la huella cargada.
+        if ($this->foto == null) {
+            return  false; // no tiene la foto
+        }
+
+        # Verificamos la huella
+        $huella = $this->huella()->first();
+        if(!$huella) return  false;
+
+        # La huella tiene que tener los binarios
+        if ($huella->template_huella == null || $huella->img_huella == null) {
+            return false;
+        }
+
+        // Se cumplieron todas las condiciones, actualizamos el estado
+        $this->estado = EstadoBecados::ACTIVO;
+        return $this->save();
+    }
 
 }

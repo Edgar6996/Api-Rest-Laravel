@@ -56,11 +56,14 @@ class BecadoControllers extends Controller
             $calendarioData = $becadoRequest['calendario'];
 
             // Crea el usuario de becado
+            $dni = trim($request->get('dni'));
+            // El usuario lo creamos con user y password DNI/DNI
+
             $user = [
                 'name' => $becadoRequest['nombres'],
                 'email' => $request->get('email'),
-                'username' => strval($request->get('dni')),
-                'password' => Hash::make($request->get('password')),
+                'username' => strval($dni),
+                'password' => Hash::make($dni),
                 'rol' => TiposUsuarios::BECADO,
             ];
 
@@ -80,14 +83,13 @@ class BecadoControllers extends Controller
             # guardamos el modelo
             $becado->saveOrFail(); # Se le asigna automaticamente el id, si se registra correctamente
 
+            # 3. Creamos el registro de la huella con los metadatos (Sin los binarios)
+            $becado->huella()->create($becadoRequest);
 
-            # 3. Generamos el calendario para el becado
-//            $calendario = Calendario::create([
-//                'becado_id' => $becado->id
-//            ]);
 
+            # 4. Generamos el calendario para el becado
             # El metodo de crear a partir de una realcion no requiere indicar el valor de la clave foranea
-            $calendario = $becado->calendario()->create($calendarioData);
+            $becado->calendario()->create($calendarioData);
 
             // Cerramos la transaccion / Confirmamos los cambios
             \DB::commit();
@@ -158,7 +160,14 @@ class BecadoControllers extends Controller
                 'foto' => $becado->foto
             ]);
 
+
+            # Despues de cargar la foto, verificamos si se completó el registro
+            $becado->checkRegistroCompletado();
+
             $res->setMessage('Foto cargada correctamente');
+        }else{
+            $res->setCode(400) // Bad Request
+                ->setMessage("No se envió el archivo 'foto'.");
         }
 
         return $res->send();

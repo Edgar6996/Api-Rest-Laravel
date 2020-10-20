@@ -17,15 +17,25 @@ class Huella extends Model
 
     protected $table = 'huellas';
 
+    # Atributos que se pueden setear con create()
+    protected $fillable = [
+        'size_template', 'img_width', 'img_height'
+    ];
+
+
     # Definimos los siguientes mutators para codificar los datos binarios en base64,
     # ya que no es posible enviar binario por json
 
     public function getImgHuellaAttribute($value)
     {
+        if(!$this->attributes['img_huella'])
+            return null;
         return base64_encode($this->attributes['img_huella']);
     }
     public function getTemplateHuellaAttribute($value)
     {
+        if(!$this->attributes['template_huella'])
+            return null;
         return base64_encode($this->attributes['template_huella']);
     }
 
