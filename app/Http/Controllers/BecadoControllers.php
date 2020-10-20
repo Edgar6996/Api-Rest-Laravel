@@ -12,9 +12,13 @@ use App\Models\Calendario;
 use App\Models\User;
 use Hash;
 use Illuminate\Http\Request;
+use Storage;
 
 class BecadoControllers extends Controller
 {
+    const FOTOS_FOLDER = 'fotos';
+
+    
     /**
      * Display a listing of the resource.
      *
@@ -110,6 +114,58 @@ class BecadoControllers extends Controller
             $res->setCode(500);
             $res->setMessage("No se registro el usuario");
             $res->addError($th->getMessage());
+        }
+
+        return $res->send();
+    }
+
+    /**
+     * Update photo to specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function cargarFoto(Request $request, $becado)
+    {
+        $res = new ApiMessage($request);
+        $becado = Becado::findOrFail($becado);
+        $res->addLog("Obtenido becado: {$becado->nombres}");
+        
+        // Vemos si se envio la foto en el $request
+        if($request->hasFile('foto')) {
+            $img = $request->file('foto');
+
+            // Definimos donde se guarda la imagen
+            $path = "public/" . self::FOTOS_FOLDER;
+
+            // Verificamos que la extension sea png|jpg|jpeg - *Ver validaciones Laravel
+            $extensiones = ['png', 'jpg', 'jpeg'];
+            if (in_array($img->extension(), $extensiones)) {
+                // Guarda la imagen y devuelve el fullpath
+                $filename = Storage::putFile($path, $img);
+                if ($filename === false) {
+                    return $res->setCode(409)->setMessage('No fue posible cargar la foto')->send();
+                }
+            } else {
+                return $res->setCode(409)->setMessage('La extensión de la imagen no es válida')->send();
+            }
+
+            // Guardamos el nombre del archivo con extension
+            $filename = basename($filename);
+            // Obtenemos link publico
+            $storage_url = Storage::url(self::FOTOS_FOLDER .'/'. $filename);
+            $public_url = \URL::to($storage_url);
+
+            // guardamos foto en becado
+            $becado->foto = $public_url;
+            $becado->save();
+            $res->addLog("Foto guardada, public_url:{$becado->foto}");
+            // Enviamos la url de la foto
+            $res->setData([
+                'foto' => $becado->foto
+            ]);
+
+            $res->setMessage('Foto cargada correctamente');
         }
 
         return $res->send();
