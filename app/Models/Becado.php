@@ -126,4 +126,17 @@ class Becado extends Model
         return $this->save();
     }
 
+
+    /**
+     * Busca un becado a partir del id de el calendario asociado. Devuelve Null si no lo encuentra.
+     *
+     * @param $calendario_id
+     * @return Becado|Builder|Model|object|null
+     */
+    public static function findByCalendarioId($calendario_id)
+    {
+        return Becado::whereHas('calendario', function(Builder $q) use($calendario_id){
+            $q->where('id', '=', $calendario_id);
+        })->first();
+    }
 }

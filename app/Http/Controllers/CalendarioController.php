@@ -16,14 +16,18 @@ class CalendarioController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($becadoId)
-    {   
+    public function show($calendarioId)
+    {
         $res = new ApiMessage();
 
         $res->addLog('Obteniendo calendario de la db');
 
         // Obtengo el calendario de becado
-        $calendarioBecado = Calendario::where('becado_id', $becadoId)->firstOrFail();
+
+        $calendarioBecado = Calendario::findOrFail($calendarioId);
+
+
+
 
         $res->setData($calendarioBecado);
 
@@ -37,13 +41,14 @@ class CalendarioController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(CalendarioUpdate $request, $becadoId)
+    public function update(CalendarioUpdate $request, $calendarioId)
     {
         $res = new ApiMessage();
         $calendarioActualizado = $request->validated();
 
         // Obtengo el calendario de becado
-        $calendarioBecado = Calendario::where('becado_id', $becadoId)->firstOrFail();
+        $calendarioBecado = Calendario::findOrFail($calendarioId);
+
         $res->addLog("Obteniendo calendario becado_id: $calendarioBecado->becado_id");
 
         // Insertamos datos actualizados

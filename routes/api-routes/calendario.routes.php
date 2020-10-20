@@ -2,5 +2,5 @@
 
 use App\Http\Controllers\CalendarioController;
 
-Route::get('calendario/{becadoId}', [CalendarioController::class, 'show']);
-Route::put('calendario/{becadoId}', [CalendarioController::class, 'update']);
+Route::get('calendario/{calendarioId}', [CalendarioController::class, 'show']);
+Route::put('calendario/{calendarioId}', [CalendarioController::class, 'update']);
