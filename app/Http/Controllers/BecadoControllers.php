@@ -53,6 +53,7 @@ class BecadoControllers extends Controller
 
         try {
             $becadoRequest = $request->validated();
+            $calendarioData = $becadoRequest['calendario'];
 
             // Crea el usuario de becado
             $user = [
@@ -86,11 +87,12 @@ class BecadoControllers extends Controller
 //            ]);
 
             # El metodo de crear a partir de una realcion no requiere indicar el valor de la clave foranea
-            $calendario = $becado->calendario()->create();
+            $calendario = $becado->calendario()->create($calendarioData);
 
             // Cerramos la transaccion / Confirmamos los cambios
             \DB::commit();
 
+            $becado->refresh();
             # Devolvemos el becado
             $res->setData($becado);
 
