@@ -43,14 +43,11 @@ Route::get('prueba', function () {
 
     $res = new ApiMessage();
 
-    # Saber si el usuario actual esta logeado
-    $esInvitado =  Auth::guest();
+    $config = \App\Models\AppConfig::getConfig();
 
-    $res = new ApiMessage();
 
-    $res->setData([
-        'invitado' => $esInvitado
-    ]);
+
+    $res->setData($config);
 
     return $res->send();
 

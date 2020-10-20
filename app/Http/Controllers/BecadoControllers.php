@@ -7,6 +7,7 @@ use App\Enums\EstadoBecados;
 use App\Enums\TiposUsuarios;
 use App\Http\Requests\Becados\BecadosRequest;
 use App\Http\Requests\Request\UpdateBecadoRequest;
+use App\Models\AppConfig;
 use App\Models\Becado;
 use App\Models\Calendario;
 use App\Models\User;
@@ -17,6 +18,8 @@ use Storage;
 class BecadoControllers extends Controller
 {
     const FOTOS_FOLDER = 'fotos';
+
+
 
 
     /**
