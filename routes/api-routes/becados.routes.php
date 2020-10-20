@@ -12,6 +12,7 @@ Route::get('/becados/{becado}', [BecadoControllers::class, 'show']);            
 
 Route::delete('/becados/{becado}',[BecadoControllers::class, 'deshabilitarBecado']);
 // Usamos post porque put no funcionaba en postamn
+// Perfecto, los Uploads los definimos con POST siempre.
 Route::post('/becados/{becado}/foto', [BecadoControllers::class, 'cargarFoto']);    // Cargar foto becado
 
 

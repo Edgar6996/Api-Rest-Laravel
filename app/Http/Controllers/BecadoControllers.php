@@ -18,7 +18,7 @@ class BecadoControllers extends Controller
 {
     const FOTOS_FOLDER = 'fotos';
 
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -50,7 +50,6 @@ class BecadoControllers extends Controller
     public function store(BecadosRequest $request)
     {
         $res = new ApiMessage();
-        $res->addLog("Iniciando proceso de registro");
 
         try {
             $becadoRequest = $request->validated();
@@ -71,9 +70,6 @@ class BecadoControllers extends Controller
 
             # El metodo create ya registra el usuario y devuelve la instancia
             $usuario =  User::create($user);
-            $res->addLog("Usuario registrado. Id: ". $usuario->id);
-
-
 
             # 2. Creamos becado en db
             $becado = new Becado($becadoRequest); # No guarda los cambios
@@ -82,7 +78,6 @@ class BecadoControllers extends Controller
 
             # guardamos el modelo
             $becado->saveOrFail(); # Se le asigna automaticamente el id, si se registra correctamente
-            $res->addLog("Becado registrado. Id:" . $becado->id);
 
 
             # 3. Generamos el calendario para el becado
@@ -93,21 +88,17 @@ class BecadoControllers extends Controller
             # El metodo de crear a partir de una realcion no requiere indicar el valor de la clave foranea
             $calendario = $becado->calendario()->create();
 
-
-            $res->addLog("Se genero el calendario con id: ". $calendario->id);
-
             // Cerramos la transaccion / Confirmamos los cambios
             \DB::commit();
 
             # Devolvemos el becado
             $res->setData($becado);
 
-
 //            \DB::transaction(function () use( $calendario) {
 //                $calendario->save();
 //            });
 
-            $res->setMessage("El usuario ha sido registrado exitosamente");
+            $res->setMessage("El becado ha sido registrado exitosamente");
         } catch (\Throwable $th) {
             \DB::rollBack();
 
@@ -130,7 +121,7 @@ class BecadoControllers extends Controller
         $res = new ApiMessage($request);
         $becado = Becado::findOrFail($becado);
         $res->addLog("Obtenido becado: {$becado->nombres}");
-        
+
         // Vemos si se envio la foto en el $request
         if($request->hasFile('foto')) {
             $img = $request->file('foto');
