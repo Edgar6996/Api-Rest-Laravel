@@ -23,11 +23,30 @@ class BecadosRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $MAX_RACIONES = 100;
+
+        $rules = [
             'dni' => 'required|numeric|unique:becados',
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
         ];
+
+        $dias = [
+            "lunes",
+            "martes",
+            "miercoles",
+            "jueves",
+            "viernes",
+            "sabado",
+            "domingo",
+        ];
+
+        foreach($dias as $dia){
+            $rules["calendario.{$dia}_dia"] = "required|numeric|between:0,$MAX_RACIONES";
+            $rules["calendario.{$dia}_noche"] = "required|numeric|between:0,$MAX_RACIONES";
+        }
+        # dd($rules);
+        return $rules;
     }
 }
