@@ -28,7 +28,7 @@ class Becado extends Model
     use HasFactory;
 
     protected $fillable = [
-        'dni', 'nombres', 'apellidos', 'email', 'categoria'
+        'dni', 'nombres', 'apellidos', 'email', 'categoria', 'telefono', 'autorizado_por'
     ];
 
     #nombre de la tabla que hace referencia
