@@ -23,6 +23,9 @@ Se debe ejecutar cada vez que se grege una nueva librería o plugin.*
 ##### Instalar Passport
 > `php artisan passport:install`
 
+##### Instalar Carbon
+> `composer require nesbot/carbon`
+
 ##### Generar clientes passport
 > `php artisan passport:client --personal`
 
