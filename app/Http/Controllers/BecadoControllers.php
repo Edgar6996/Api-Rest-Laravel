@@ -197,6 +197,56 @@ class BecadoControllers extends Controller
         // Envia el response
         return $res->send();
     }
+    /**
+     * @return [type]
+     */
+    public function cargarHuella(Request $request, $id_becado){
+        $res = new ApiMessage();
+
+        $becado = Becado::findOrFail($id_becado);
+        $huella = $becado->huella()->firstOrFail();
+
+        if($request->hasFile('template_huella')){
+
+            #... guardamos la template
+            $file = $request->file('template_huella');
+            $res->addLog("Template huella enviada");
+            $data = file_get_contents($file->getRealPath());
+
+
+            $huella->template_huella = $data;
+        }
+
+        if ($request->hasFile('img_huella')) {
+
+
+            $file = $request->file('img_huella');
+            $res->addLog("Imagen huella enviada ");
+            $data = file_get_contents($file->getRealPath());
+
+            $huella->img_huella = $data;
+        }
+        # Guardamos los cambios
+        try {
+            $huella->saveOrFail();
+
+            $becado->checkRegistroCompletado();
+
+            $res->setData([
+                'size' => $file->getSize(),
+                'id' => $huella->id
+            ]);
+
+            $res->setMessage('Huellas cargadas correctamente');
+
+        } catch (\Throwable $e) {
+            dd($e->getMessage());
+            $res->addError($e->getMessage());
+            $res->setMessage("Error:". $e->getMessage());
+            $res->setCode(409);
+        }
+        return $res->send();
+    }
 
     /**
      * Update the specified resource in storage.
