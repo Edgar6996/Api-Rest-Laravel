@@ -30,6 +30,8 @@ class BecadosRequest extends FormRequest
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
+            'telefono'=> 'required|numeric',
+            'autorizado_por' => 'required|string|max:255',
 
             'size_template' => 'required|numeric',
             'img_width' => 'required|numeric',
