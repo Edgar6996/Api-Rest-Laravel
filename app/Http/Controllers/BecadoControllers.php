@@ -11,6 +11,7 @@ use App\Models\AppConfig;
 use App\Models\Becado;
 use App\Models\Calendario;
 use App\Models\User;
+use Auth;
 use Hash;
 use Illuminate\Http\Request;
 use Storage;
@@ -197,6 +198,30 @@ class BecadoControllers extends Controller
         // Envia el response
         return $res->send();
     }
+
+    /**
+     * Display the specified resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function usuarioActual(Request $request)
+    {
+        // Crea la instancia de apiMessage
+        $res = new ApiMessage();
+
+        // Obtener el usuario:
+        $usuarioActual = Auth::user();
+        
+        if ($usuarioActual->rol == TiposUsuarios::BECADO) {
+            $usuarioActual->load('becado');
+        }
+
+        $res->setData($usuarioActual);
+
+        // Envia el response
+        return $res->send();
+    }
+
     /**
      * @return [type]
      */
