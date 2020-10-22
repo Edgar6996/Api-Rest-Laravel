@@ -51,4 +51,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // Relaciones
+    public function becado(){
+        return $this->hasOne(Becado::class, 'user_id');
+    }
 }

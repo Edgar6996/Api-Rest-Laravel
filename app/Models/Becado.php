@@ -72,9 +72,6 @@ class Becado extends Model
         return $this->hasMany(DetalleDiario::class, 'becado_id');
     }
 
-
-
-
     # Scopes
     public function scopeActivos(Builder $query)
     {
