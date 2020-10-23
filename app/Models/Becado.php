@@ -62,10 +62,10 @@ class Becado extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne|Huella
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany|Huella
      */
-    public function huella(){
-        return $this->hasOne(Huella::class, 'becado_id');
+    public function huellas(){
+        return $this->hasMany(Huella::class, 'becado_id');
     }
 
     public function detalleDiario(){
