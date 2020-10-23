@@ -260,6 +260,14 @@ class BecadoControllers extends Controller
         return $res->send();
     }
 
+    public function showBecadoHuellas(Request $request , Becado $becado)
+    {
+        $res = new ApiMessage($request);
+        $lista = $becado->huellas()->get();
+        $res->setData($lista);
+        return $res->send();
+    }
+
     /**
      * Update the specified resource in storage.
      *
