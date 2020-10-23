@@ -19,25 +19,12 @@ class Huella extends Model
 
     # Atributos que se pueden setear con create()
     protected $fillable = [
-        'size_template', 'img_width', 'img_height'
+        'size_template', 'img_width', 'img_height',
+        'template_huella', 'img_huella'
     ];
 
 
-    # Definimos los siguientes mutators para codificar los datos binarios en base64,
-    # ya que no es posible enviar binario por json
 
-    public function getImgHuellaAttribute($value)
-    {
-        if(!$this->attributes['img_huella'])
-            return null;
-        return base64_encode($this->attributes['img_huella']);
-    }
-    public function getTemplateHuellaAttribute($value)
-    {
-        if(!$this->attributes['template_huella'])
-            return null;
-        return base64_encode($this->attributes['template_huella']);
-    }
 
     public function becado(){
     	return $this->hasOne(Becado::class, 'becado_id');

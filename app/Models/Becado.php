@@ -62,10 +62,10 @@ class Becado extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne|Huella
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany|Huella
      */
-    public function huella(){
-        return $this->hasOne(Huella::class, 'becado_id');
+    public function huellas(){
+        return $this->hasMany(Huella::class, 'becado_id');
     }
 
     public function detalleDiario(){
@@ -109,14 +109,9 @@ class Becado extends Model
             return  false; // no tiene la foto
         }
 
-        # Verificamos la huella
-        $huella = $this->huella()->first();
-        if(!$huella) return  false;
-
-        # La huella tiene que tener los binarios
-        if ($huella->template_huella == null || $huella->img_huella == null) {
-            return false;
-        }
+        # Verificamos las huellas, debe tener dos
+        $total = $this->huellas()->count();
+        if(!$total < 2) return  false;
 
         // Se cumplieron todas las condiciones, actualizamos el estado
         $this->estado = EstadoBecados::ACTIVO;
