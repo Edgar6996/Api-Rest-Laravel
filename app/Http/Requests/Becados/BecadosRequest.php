@@ -33,9 +33,7 @@ class BecadosRequest extends FormRequest
             'telefono'=> 'required|numeric',
             'autorizado_por' => 'required|string|max:255',
 
-            'size_template' => 'required|numeric',
-            'img_width' => 'required|numeric',
-            'img_height' => 'required|numeric'
+
         ];
 
         $dias = [

@@ -109,14 +109,9 @@ class Becado extends Model
             return  false; // no tiene la foto
         }
 
-        # Verificamos la huella
-        $huella = $this->huella()->first();
-        if(!$huella) return  false;
-
-        # La huella tiene que tener los binarios
-        if ($huella->template_huella == null || $huella->img_huella == null) {
-            return false;
-        }
+        # Verificamos las huellas, debe tener dos
+        $total = $this->huellas()->count();
+        if(!$total < 2) return  false;
 
         // Se cumplieron todas las condiciones, actualizamos el estado
         $this->estado = EstadoBecados::ACTIVO;

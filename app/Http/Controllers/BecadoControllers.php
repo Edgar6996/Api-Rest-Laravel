@@ -6,6 +6,7 @@ use App\Core\Tools\ApiMessage;
 use App\Enums\EstadoBecados;
 use App\Enums\TiposUsuarios;
 use App\Http\Requests\Becados\BecadosRequest;
+use App\Http\Requests\Becados\UploadHuellaRequest;
 use App\Http\Requests\Request\UpdateBecadoRequest;
 use App\Models\AppConfig;
 use App\Models\Becado;
@@ -19,8 +20,6 @@ use Storage;
 class BecadoControllers extends Controller
 {
     const FOTOS_FOLDER = 'fotos';
-
-
 
 
     /**
@@ -80,18 +79,14 @@ class BecadoControllers extends Controller
             $usuario =  User::create($user);
 
             # 2. Creamos becado en db
-            $becado = new Becado($becadoRequest); # No guarda los cambios
+            $becado = new Becado($becadoRequest); # No guarda los cambios todavía
 
             $becado->user_id = $usuario->id;
 
             # guardamos el modelo
             $becado->saveOrFail(); # Se le asigna automaticamente el id, si se registra correctamente
 
-            # 3. Creamos el registro de la huella con los metadatos (Sin los binarios)
-            $becado->huella()->create($becadoRequest);
-
-
-            # 4. Generamos el calendario para el becado
+            # 3. Generamos el calendario para el becado
             # El metodo de crear a partir de una realcion no requiere indicar el valor de la clave foranea
             $becado->calendario()->create($calendarioData);
 
@@ -166,7 +161,10 @@ class BecadoControllers extends Controller
 
 
             # Despues de cargar la foto, verificamos si se completó el registro
-            $becado->checkRegistroCompletado();
+            $isCompleted = $becado->checkRegistroCompletado();
+            if($isCompleted){
+                $res->addLog("El registro del becado se ha completado");
+            }
 
             $res->setMessage('Foto cargada correctamente');
         }else{
@@ -211,7 +209,7 @@ class BecadoControllers extends Controller
 
         // Obtener el usuario:
         $usuarioActual = Auth::user();
-        
+
         if ($usuarioActual->rol == TiposUsuarios::BECADO) {
             $usuarioActual->load('becado');
         }
@@ -225,44 +223,33 @@ class BecadoControllers extends Controller
     /**
      * @return [type]
      */
-    public function cargarHuella(Request $request, $id_becado){
+    public function cargarHuella(UploadHuellaRequest $request, $id_becado){
         $res = new ApiMessage();
 
+        $datos = $request->validated();
+
         $becado = Becado::findOrFail($id_becado);
-        $huella = $becado->huella()->firstOrFail();
 
-        if($request->hasFile('template_huella')){
-
-            #... guardamos la template
-            $file = $request->file('template_huella');
-            $res->addLog("Template huella enviada");
-            $data = file_get_contents($file->getRealPath());
-
-
-            $huella->template_huella = $data;
+        # Verificamos que no tenga las dos huellas cargadas
+        $total_huellas = $becado->huellas()->count();
+        if($total_huellas> 1){
+            return $res->setCode(409)->setMessage("El becado ya tiene {$total_huellas} huellas cargadas.")->send();
         }
 
-        if ($request->hasFile('img_huella')) {
-
-
-            $file = $request->file('img_huella');
-            $res->addLog("Imagen huella enviada ");
-            $data = file_get_contents($file->getRealPath());
-
-            $huella->img_huella = $data;
-        }
-        # Guardamos los cambios
         try {
-            $huella->saveOrFail();
+            # Agregamos la nueva huella al becado
+            $storedHuella = $becado->huellas()->create($datos);
+            $total_huellas++;
+            $isCompleted = $becado->checkRegistroCompletado();
 
-            $becado->checkRegistroCompletado();
+            if($isCompleted){
+                $res->addLog("El registro del becado se ha completado");
+            }
 
+            $res->setMessage("Huella {$total_huellas}/2 cargada correctamente.");
             $res->setData([
-                'size' => $file->getSize(),
-                'id' => $huella->id
+                'huella_id' => $storedHuella->id
             ]);
-
-            $res->setMessage('Huellas cargadas correctamente');
 
         } catch (\Throwable $e) {
             dd($e->getMessage());
