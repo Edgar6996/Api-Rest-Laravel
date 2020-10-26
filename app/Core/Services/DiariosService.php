@@ -11,7 +11,10 @@ use Carbon\Carbon;
 
 class DiariosService
 {
-
+    /**
+     * @return Diario
+     * @throws \Exception
+     */
 	public function generarProximoDiario()
   	{
 
@@ -25,15 +28,16 @@ class DiariosService
 
       \DB::beginTransaction();
 
-    	$fields = Diario::create([
+    	$diario_prox = Diario::create([
         'fecha' => $fecha_diario,
         'horario_comida' => $this->keyDia(),
         'total_raciones' => 0,
     	]);
 
-      $this->crearDetalleDiario($fields);
+      $this->crearDetalleDiario($diario_prox);
 
       \DB::commit();
+      return $diario_prox;
   	}
 
   	private function proximoComida()

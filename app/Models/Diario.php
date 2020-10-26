@@ -2,12 +2,20 @@
 
 namespace App\Models;
 
-use App\Models\DetalleDiario;
-use App\Models\Diario;
-use App\Models\Registro;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class Diario
+ *
+ * @package App\Models
+ * @mixin \Eloquent
+ *
+ * @property string horario_comida
+ * @property int total_raciones
+ * @property Carbon fecha
+ */
 class Diario extends Model
 {
     use HasFactory;

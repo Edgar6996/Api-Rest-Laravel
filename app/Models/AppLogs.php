@@ -32,4 +32,12 @@ class AppLogs extends Model
         ]);
     }
 
+    public static function addError(string $titulo, \Throwable $e, array $data = [])
+    {
+        $data['error_message'] = $e->getMessage();
+        $data['error_line'] = $e->getFile() .':' . $e->getLine();
+
+
+        self::add($titulo,LogTypes::ERROR,$data);
+    }
 }
