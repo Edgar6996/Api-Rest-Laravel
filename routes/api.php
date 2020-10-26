@@ -14,28 +14,7 @@ require_once "api-routes/calendario.routes.php"; // Rutas calendario becado requ
 
 Route::middleware('auth:api')->get('/user', [BecadoControllers::class, 'usuarioActual']);
 
-// Route::middleware('auth:api')->get('/user', function (Request $request) {
-
-//     # Obtener el usuario:
-//     $usuarioActual = Auth::user();
-
-//     $idUsuarioActual = Auth::id();
-
-//     # Saber si el usuario actual esta logeado
-//     $esInvitado =  Auth::guest();
-
-//     $res = new ApiMessage();
-
-//     $res->setData([
-//         'invitado' => $esInvitado
-//     ]);
-
-//     return $res->send();
-// });
-
-
-
-
+Route::get('admin/logs', [\App\Http\Controllers\AdminController::class,'indexAppLogs']);
 
 
 
