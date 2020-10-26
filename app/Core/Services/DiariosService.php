@@ -19,7 +19,7 @@ class DiariosService
 
     	$fecha_diario = $this->proximoComida();
 
-      if($fecha_diario->eq($diario_actual->fecha)){
+      if($diario_actual != NULL && $fecha_diario->eq($diario_actual->fecha)){
           throw new \Exception("ya se ha generado el diario");
       }
 
