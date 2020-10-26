@@ -69,9 +69,14 @@ class CalendarioController extends Controller
 
     public function diario()
     {
+        try {
+             $diario = new DiariosService();
+             return $diario->generarProximoDiario();
+        } catch (Exception $e){
+            return $e->getMessage();
+        }
 
-        $diario = new DiariosService();
 
-        return $diario->generarProximoDiario();
+
     }
 }

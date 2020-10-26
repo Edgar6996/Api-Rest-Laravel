@@ -3,6 +3,7 @@
 namespace App\Core\Services;
 
 use App\Core\Tools\ApiMessage;
+use App\Models\Becado;
 use App\Models\Calendario;
 use App\Models\Diario;
 use Carbon\Carbon;
@@ -14,15 +15,25 @@ class DiariosService
 	public function generarProximoDiario()
   	{
 
+      $diario_actual = Diario::diarioActual();
+
     	$fecha_diario = $this->proximoComida();
+
+      if($fecha_diario->eq($diario_actual->fecha)){
+          throw new \Exception("ya se ha generado el diario");
+      }
+
+      \DB::beginTransaction();
 
     	$fields = Diario::create([
         'fecha' => $fecha_diario,
-        'horario_comida' => $this->key_dia(),
-        'total_raciones' => 10,
+        'horario_comida' => $this->keyDia(),
+        'total_raciones' => 0,
     	]);
 
-    	return $fields;
+      $this->crearDetalleDiario($fields);
+
+      \DB::commit();
   	}
 
   	private function proximoComida()
@@ -41,7 +52,7 @@ class DiariosService
   		}
   	}
 
-    private function key_dia(){
+    private function keyDia(){
 
       $fecha_diario = $this->proximoComida();
 
@@ -54,7 +65,23 @@ class DiariosService
       return $key_dia;
     }
 
-    private function total_raciones(){
-      $fields = Calendario::all()
+    private function totalRaciones(){
+      /*$fields = Calendario::all()*/
+    }
+
+    private function crearDetalleDiario(Diario $diario){
+      #buscamos los becados que comen en el dia actual
+      $lista_becados = Becado::whereHas('calendario', function($query) use($diario){
+          $query->where($diario->horario_comida, '>', 0); //todos los becados que tienen en su calendario en el campo raciones mayor a cero
+      })->with('calendario:id,becado_id,'.$diario->horario_comida)->get();
+
+      $key_dia = $diario->horario_comida;
+
+      foreach ($lista_becados as $becado) {
+        $diario->detalleDiario()->create([
+            'becado_id' => $becado->id,
+            'raciones' => $becado->calendario->$key_dia
+        ]);
+      }
     }
 }

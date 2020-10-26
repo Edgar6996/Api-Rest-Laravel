@@ -13,6 +13,8 @@ class DetalleDiario extends Model
 
     protected $table = 'detalle_diarios';
 
+    protected $fillable = [ 'diario_id', 'becado_id', 'raciones'];
+
     public function becado(){
 
     	return $this->hasOne(Becado::class,'becado_id');
