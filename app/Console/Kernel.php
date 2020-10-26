@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Core\Services\DiariosService;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -25,6 +26,14 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+
+        # 3am - daily
+        $schedule->call(function () {
+            $service = new DiariosService();
+
+            $service->generarProximoDiario();
+
+        })->dailyAt('03:00');
     }
 
     /**

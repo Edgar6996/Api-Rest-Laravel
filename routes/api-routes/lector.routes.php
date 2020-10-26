@@ -9,4 +9,5 @@ Route::prefix("lector")->group(function () {
     Route::post('nuevo-token', [LectorController::class, 'crearNuevoToken']);
 
 
+
 });
