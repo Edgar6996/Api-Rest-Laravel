@@ -65,10 +65,6 @@ class DiariosService
       return $key_dia;
     }
 
-    private function totalRaciones(){
-      /*$fields = Calendario::all()*/
-    }
-
     private function crearDetalleDiario(Diario $diario){
       #buscamos los becados que comen en el dia actual
       $lista_becados = Becado::whereHas('calendario', function($query) use($diario){

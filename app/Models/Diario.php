@@ -34,4 +34,6 @@ class Diario extends Model
     public static function diarioActual(){
        return Diario::orderBy('fecha', 'DESC')->first();
     }
+
+
 }
