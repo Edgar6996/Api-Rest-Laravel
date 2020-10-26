@@ -35,5 +35,17 @@ class Diario extends Model
        return Diario::orderBy('fecha', 'DESC')->first();
     }
 
+    public function calcularRacionesDisponibles(){
+        $retirado = $this->detalleDiario()->where('retirado',1)->sum('raciones');
 
+        return $this->total_raciones-$retirado;
+    }
+
+    public function actualizarTotalRaciones(){
+        $total = $this->detalleDiario()->sum('raciones');
+
+        $this->total_raciones = $total;
+
+        $this->save();
+    }
 }
