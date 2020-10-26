@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Core\Services\DiariosService;
 use App\Core\Tools\ApiMessage;
 use App\Http\Requests\Calendario\CalendarioUpdate;
 use App\Models\Calendario;
@@ -25,9 +26,6 @@ class CalendarioController extends Controller
         // Obtengo el calendario de becado
 
         $calendarioBecado = Calendario::findOrFail($calendarioId);
-
-
-
 
         $res->setData($calendarioBecado);
 
@@ -69,4 +67,11 @@ class CalendarioController extends Controller
         return $res->send();
     }
 
+    public function diario()
+    {
+
+        $diario = new DiariosService();
+
+        return $diario->generarProximoDiario();
+    }
 }

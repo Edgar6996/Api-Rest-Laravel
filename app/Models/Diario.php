@@ -13,6 +13,10 @@ class Diario extends Model
 
     protected $table = 'diarios';
 
+    protected $fillable  = [
+       'fecha', 'horario_comida','total_raciones',
+    ];
+
     #Relaciones
     public function registro(){
         return $this->belongsTo(Registro::class, 'registro_id');
