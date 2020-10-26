@@ -8,6 +8,8 @@ use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
 {
+    const TOKENS_DURATION_HOURS = 2;
+
     /**
      * The policy mappings for the application.
      *
@@ -28,11 +30,18 @@ class AuthServiceProvider extends ServiceProvider
 
         Passport::routes();
 
+        self::setPassportConfig();
+
+    }
+
+    public static function setPassportConfig()
+    {
         # Configuramos los tiempos de expiración de los tokens
         Passport::tokensExpireIn(now()->addMinutes(15));
         Passport::refreshTokensExpireIn(now()->addMinutes(30));
 
-        Passport::personalAccessTokensExpireIn(now()->addHours(2));
+
+        Passport::personalAccessTokensExpireIn(now()->addHours(self::TOKENS_DURATION_HOURS));
 
     }
 }
