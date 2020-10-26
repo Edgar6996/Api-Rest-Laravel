@@ -8,11 +8,17 @@ use App\Enums\LogTypes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class AppLogs
+ * @package App\Models
+ * @mixin \Eloquent
+ */
 class AppLogs extends Model
 {
     use HasFactory;
 
     protected $table = 'logs';
+    protected $hidden = ['updated_at'];
     protected $fillable = [
         'tipo',
         'titulo',
