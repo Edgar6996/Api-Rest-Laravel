@@ -6,6 +6,7 @@ use App\Core\Services\DiariosService;
 use App\Core\Tools\ApiMessage;
 use App\Http\Requests\Calendario\CalendarioUpdate;
 use App\Models\Calendario;
+use App\Models\Diario;
 use Illuminate\Http\Request;
 
 class CalendarioController extends Controller
@@ -67,16 +68,11 @@ class CalendarioController extends Controller
         return $res->send();
     }
 
-    public function diario()
+    public function prueba()
     {
-        try {
-             $diario = new DiariosService();
-             return $diario->generarProximoDiario();
-        } catch (Exception $e){
-            return $e->getMessage();
-        }
 
-
+        /*
+        }*/
 
     }
 }

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Core\Tools\ApiMessage;
 use App\Enums\TiposUsuarios;
+use App\Models\Diario;
+use App\Models\Registro;
 use App\Models\User;
 use App\Providers\AuthServiceProvider;
 use Illuminate\Http\Request;
@@ -44,16 +46,33 @@ class LectorController extends Controller
 
         // TODO:
         // 1. Buscar en el Diario Actual, el DetalleDiario correspondiente al becado_id.
+        $diario_actual = Diario::diarioActual();
+
+       $detalle = $diario_actual->detalleDiario()->where('becado_id',$becado_id)->first();
         //  -> Si no existe, significa que el becado no tiene reserva para el Diario actual, devolvemos un error
+       if(!$detalle){
+            return $res->setMessage("No comes hoy ")
+                ->setCode(400)
+                ->send();
+       }
 
+       if($detalle->retirado){
+            return $res->setMessage("Ya se registro")
+                ->setCode(400)
+                ->send();
+       }
         // 2 Si existe, entonces actualizamos el DetalleDiario indicando que retiró sus raciones
+       $detalle->retirado = true;
 
+       $detalle->save();
 
         // 3. Crear un registro en el modelo Registro
+       Registro::create([
+            'becado_id' => $becado_id,
+            'diario_id' => $diario_actual->id,
+            'fecha_hora' => now(),
+       ]);
 
-
-
-
-        return $res->send();
+        return $res->setMessage("Se registro el acceso del becado")->send();
     }
 }

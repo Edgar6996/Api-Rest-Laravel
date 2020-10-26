@@ -14,6 +14,8 @@ class Registro extends Model
     #nombre de la tabla que hace referencia
     protected $table = 'registros';
 
+    protected $fillable = ['becado_id', 'diario_id', 'fecha_hora'];
+
     #relacion
     public function becado(){
         return $this->belongsTo(Becado::class, 'becado_id');
