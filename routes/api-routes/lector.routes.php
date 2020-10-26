@@ -9,6 +9,7 @@ Route::prefix("lector")->group(function () {
 
     Route::post('nuevo-token', [LectorController::class, 'crearNuevoToken']);
 
+
 });
 
 Route::get('diario-actual/raciones-disponibles', [DiarioController::class, 'mostarRacionesDisponibles']);
