@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TiposUsuarios;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -19,6 +20,7 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens;
 
+    const USER_LECTOR_EMAIL = 'lector@email.app';
 
     /**
      * The attributes that are mass assignable.
@@ -56,4 +58,31 @@ class User extends Authenticatable
     public function becado(){
         return $this->hasOne(Becado::class, 'user_id');
     }
+
+    /**
+     * Obtiene el usaurio Lector
+     * @return \Illuminate\Database\Eloquent\Model|User|null
+     */
+    public static function getLectorUser()
+    {
+        $usr =  User::where('email','like',self::USER_LECTOR_EMAIL)->first();
+        if(!$usr){
+            $usr = self::_registrarUsuarioLector();
+        }
+        return  $usr;
+    }
+
+    private static function _registrarUsuarioLector()
+    {
+        return User::create([
+            'email' => User::USER_LECTOR_EMAIL,
+            'name' => 'Lector',
+            'username' => 'lector',
+            'password' => \Hash::make('*lector*'),
+            'rol' => TiposUsuarios::LECTOR_HUELLA,
+            'email_verified_at' => now()
+        ]);
+    }
+
 }
+

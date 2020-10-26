@@ -9,5 +9,6 @@ final class TiposUsuarios extends Enum
 {
     const BECADO        =   0;
     const OPERADOR      =   1;
-    const ADMINISTRADOR   = 2;
+    const ADMINISTRADOR  = 2;
+    const LECTOR_HUELLA =  4;
 }
