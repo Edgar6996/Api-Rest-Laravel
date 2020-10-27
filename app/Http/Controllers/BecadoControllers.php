@@ -189,6 +189,7 @@ class BecadoControllers extends Controller
 
         # Con load, le podemos indicar que nos envie una relacion
         $becado->load('calendario');
+        $becado->load('huellas');
 
         // Carga el dato en el response
         $res->setData($becado);
