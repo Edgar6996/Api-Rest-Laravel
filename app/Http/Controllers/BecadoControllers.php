@@ -45,6 +45,22 @@ class BecadoControllers extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function becadosCompleto(Request $request)
+    {
+        $res = new ApiMessage();
+
+        $lista = Becado::with('huellas')->get();
+
+        $res->setData($lista);
+        return  $res->send();
+
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request

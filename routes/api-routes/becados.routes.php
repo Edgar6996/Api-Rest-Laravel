@@ -4,6 +4,7 @@ use App\Http\Controllers\BecadoControllers;
 
 
 Route::get('/becados', [BecadoControllers::class, 'index']);                    // Listar
+Route::get('/becados-completo', [BecadoControllers::class, 'becadosCompleto']);                    // Listar
 Route::post('/becados', [BecadoControllers::class, 'store']);                   // Crear becado
 Route::put('/becados/{becado}', [BecadoControllers::class, 'update']);     // Actualizar
 Route::get('/becados/{becado}', [BecadoControllers::class, 'show']);            // Listar becado individual
