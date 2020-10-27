@@ -45,6 +45,28 @@ class BecadoControllers extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function becadosCompleto(Request $request)
+    {
+        $res = new ApiMessage();
+
+        # Pensar en agregar opcion de filtro
+        $perPage = $request->get('per_page',10) ; // items por pagina
+
+        $consulta = Becado::with('huellas');
+
+
+        $lista = $consulta->paginate($perPage);
+
+        $res->setData($lista);
+        return  $res->send();
+
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -189,7 +211,6 @@ class BecadoControllers extends Controller
 
         # Con load, le podemos indicar que nos envie una relacion
         $becado->load('calendario');
-        $becado->load('huellas');
 
         // Carga el dato en el response
         $res->setData($becado);
