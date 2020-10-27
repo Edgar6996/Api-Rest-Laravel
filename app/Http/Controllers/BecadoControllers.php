@@ -53,13 +53,7 @@ class BecadoControllers extends Controller
     {
         $res = new ApiMessage();
 
-        # Pensar en agregar opcion de filtro
-        $perPage = $request->get('per_page',10) ; // items por pagina
-
-        $consulta = Becado::with('huellas');
-
-
-        $lista = $consulta->paginate($perPage);
+        $lista = Becado::with('huellas')->get();
 
         $res->setData($lista);
         return  $res->send();
