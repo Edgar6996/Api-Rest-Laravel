@@ -11,6 +11,7 @@ require_once "api-routes/auth.routes.php";
 require_once "api-routes/lector.routes.php"; // Rutas exclusivas para el sistema Lector de huella
 require_once "api-routes/becados.routes.php"; // Rutas becado requeridas
 require_once "api-routes/calendario.routes.php"; // Rutas calendario becado requeridas
+require_once "api-routes/admin.routes.php";
 
 Route::middleware('auth:api')->get('/user', [BecadoControllers::class, 'usuarioActual']);
 
@@ -22,27 +23,14 @@ Route::get('admin/logs', [\App\Http\Controllers\AdminController::class,'indexApp
 
 Route::get('users',[\App\Http\Controllers\Users\UsersController::class, "index"]);
 
-Route::post('prueba',[\App\Http\Controllers\EjemploController::class,"storeBlob"]);
+
 Route::get('prueba', function () {
 
     $res = new ApiMessage();
 
+    $res->setMessage("Ruta de prueba");
 
-    $user = \App\Models\User::first();
-    $a = Passport::$personalAccessTokensExpireAt->format('c');
-
-    $b = Passport::$personalAccessTokensExpireAt->format('c');
-    $token = $user->createToken('token_1');
-    dd([
-        'a' => $a,
-        'b' => $b
-    ]);
-
-    #$p = Token::query()->where('name','like','token_1')->get();
-//    $p =  $user->tokens()->get();
-//    $p[0]->revoke();
-//    dd($p);
     return $res->send();
 
 
-});
+})->middleware('auth:api','user.lector');

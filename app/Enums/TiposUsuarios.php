@@ -11,4 +11,5 @@ final class TiposUsuarios extends Enum
     const OPERADOR      =   1;
     const ADMINISTRADOR  = 2;
     const LECTOR_HUELLA =  4;
+    const ROOT          = 99;
 }
