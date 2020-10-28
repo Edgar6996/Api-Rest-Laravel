@@ -10,8 +10,6 @@ use Laravel\Passport\Token;
 require_once "api-routes/auth.routes.php";
 require_once "api-routes/lector.routes.php"; // Rutas exclusivas para el sistema Lector de huella
 
-# Rutas exclusivas para administradores
-require_once "api-routes/admin.routes.php";
 
 Route::middleware('auth:api')->get('/user', [BecadoControllers::class, 'usuarioActual']);
 
@@ -20,6 +18,9 @@ Route::middleware('auth:api')->group(function () {
     require_once "api-routes/becados.routes.php"; // Rutas becado requeridas
     require_once "api-routes/calendario.routes.php"; // Rutas calendario becado requeridas
     require_once "api-routes/diarios.routes.php";
+
+    # Rutas exclusivas para administradores
+    require_once "api-routes/admin.routes.php";
  });
  
 
