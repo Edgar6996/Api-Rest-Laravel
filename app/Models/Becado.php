@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Builder;
  *
  * @property int|EstadoBecados estado
  * @property string|null foto: Link de la foto del becado
- *
+ * @property int user_id
  */
 class Becado extends Model
 {

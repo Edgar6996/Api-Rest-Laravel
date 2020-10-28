@@ -322,10 +322,21 @@ class BecadoControllers extends Controller
     public function update(UpdateBecadoRequest $request, $id)
     {
         $res = new ApiMessage();
-        $datos = $request->validated();
-
         # obtengo el becacdo
         $becado = Becado::findOrFail($id);
+
+        # Verificamos los permisos
+        $user = Auth::user();
+        # si no es el mismo usuario ni el Lector o un Root user, prohinimos
+        if($becado->user_id != $user->id && !in_array($user->rol,[TiposUsuarios::ROOT, TiposUsuarios::LECTOR_HUELLA])){
+            return $res->setCode(403)
+                ->setMessage("Acceso denegado")->send();
+        }
+
+
+        $datos = $request->validated();
+
+
 
         # Actualizamos los datos
         $becado->update($datos);
