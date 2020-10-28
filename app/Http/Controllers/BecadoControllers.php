@@ -79,7 +79,8 @@ class BecadoControllers extends Controller
 
 
         # Verificamos si existe un becado con ese dni
-        $stored = Becado::where('dni','=',$dni)
+        $stored = Becado::withoutGlobalScope('activos')
+            ->where('dni','=',$dni)
             ->orWhere('email','=',$request->get('email'))
             ->first();
         if($stored){
