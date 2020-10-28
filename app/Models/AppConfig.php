@@ -22,8 +22,12 @@ class AppConfig extends Model
     # Definimos los valores por defecto
     protected $attributes = [
         'max_porciones_becado' => 3,
-        'max_porciones_quirofano' => 100
-        // ...
+        'max_porciones_quirofano' => 100,
+        'limite_horas_cancelar_reserva' => 2,
+        'max_faltas' => 3,
+        'castigo_duracion_dias' => 10,
+        'hora_cena'=> "20:00:00",
+        'hora_almuerzo' => "12:00:00"
     ];
 
     // indicamos las columnas que no se deberian modificar desde un create()

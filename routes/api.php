@@ -29,10 +29,11 @@ Route::middleware('auth:api')->get('/user', [BecadoControllers::class, 'usuarioA
 Route::get('prueba', function () {
 
     $res = new ApiMessage();
+    $settings = \App\Models\AppConfig::getConfig();
 
-    $res->setMessage("Ruta de prueba");
+    $res->setData($settings);
 
     return $res->send();
 
 
-})->middleware('auth:api','user.lector');
+});
