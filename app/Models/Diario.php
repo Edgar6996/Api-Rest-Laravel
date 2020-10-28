@@ -30,6 +30,10 @@ class Diario extends Model
        'fecha', 'horario_comida','total_raciones',
     ];
 
+    protected $casts = [
+        'total_raciones' => 'integer'
+    ];
+
     #Relaciones
     public function registro(){
         return $this->belongsTo(Registro::class, 'registro_id');

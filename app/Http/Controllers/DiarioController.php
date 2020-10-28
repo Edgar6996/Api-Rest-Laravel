@@ -14,7 +14,7 @@ class DiarioController extends Controller
     {
         $res = new ApiMessage($request);
         $diario_actual = Diario::diarioActual();
-        if($diario_actual){
+        if(!$diario_actual){
             # no hay diario actuak
             $service = new DiariosService();
             try {
