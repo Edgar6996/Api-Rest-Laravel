@@ -25,11 +25,13 @@ class BecadosRequest extends FormRequest
     {
         $MAX_RACIONES = 100;
 
+        # Nota: no validamos el unique de DNI ni de Email porque en el metodo @store, si ya existe, se
+        #       procede a hacer un update del becado.
         $rules = [
-            'dni' => 'required|numeric|unique:becados',
+            'dni' => 'required|numeric|',
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
+            'email' => 'required|email',
             'telefono'=> 'required|numeric',
             'autorizado_por' => 'required|string|max:255',
 
