@@ -22,9 +22,7 @@ class Diario extends Model
 
     protected $table = 'diarios';
 
-    protected $dates = [
-        'fecha',
-    ];
+    protected $dates = ['fecha'];
 
     protected $fillable  = [
        'fecha', 'horario_comida','total_raciones',

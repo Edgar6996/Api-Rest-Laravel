@@ -9,6 +9,7 @@ use App\Http\Requests\Becados\BecadosRequest;
 use App\Http\Requests\Becados\UploadHuellaRequest;
 use App\Http\Requests\Request\UpdateBecadoRequest;
 use App\Models\AppConfig;
+use App\Models\AppLogs;
 use App\Models\Becado;
 use App\Models\Calendario;
 use App\Models\User;
@@ -70,22 +71,49 @@ class BecadoControllers extends Controller
     {
         $res = new ApiMessage();
 
+        $becadoRequest = $request->validated();
+        $calendarioData = $becadoRequest['calendario'];
+
+
+        $dni = trim($request->get('dni'));
+
+
+        # Verificamos si existe un becado con ese dni
+        $stored = Becado::where('dni','=',$dni)
+            ->orWhere('email','=',$request->get('email'))
+            ->first();
+        if($stored){
+            # Ya existe el becado, procedemos a actualizarlo
+            // Nota: solo actualizamos los datos del becado, no su clave ni nada
+            $stored->update($becadoRequest);
+            try {
+                $stored->saveOrFail();
+
+                return $res->setMessage("El becado ya existe. Sus datos fueron actualizados.")
+                    ->send();
+            } catch (\Throwable $e) {
+                AppLogs::addError("Error al actualizar el becado desde @store",$e,[
+                    'params' => $becadoRequest
+                ]);
+                return $res->setCode(409)->setMessage("No fue posible actualizar el becado.")->send();
+            }
+
+
+        }
+
+
+        // El usuario lo creamos con user y password DNI/DNI
+        $user = [
+            'name' => $becadoRequest['nombres'],
+            'email' => $request->get('email'),
+            'username' => strval($dni),
+            'password' => Hash::make($dni),
+            'rol' => TiposUsuarios::BECADO,
+        ];
+
+
+
         try {
-            $becadoRequest = $request->validated();
-            $calendarioData = $becadoRequest['calendario'];
-
-            // Crea el usuario de becado
-            $dni = trim($request->get('dni'));
-            // El usuario lo creamos con user y password DNI/DNI
-
-            $user = [
-                'name' => $becadoRequest['nombres'],
-                'email' => $request->get('email'),
-                'username' => strval($dni),
-                'password' => Hash::make($dni),
-                'rol' => TiposUsuarios::BECADO,
-            ];
-
             // Iniciamos la transaccion para que todos los inserts se registren o si falla, no se registre ninguno
             # Las transacciones debemos emplear siempre que se registren o actualizen mas de un modelo en la base de datos.
             \DB::beginTransaction();
@@ -319,6 +347,9 @@ class BecadoControllers extends Controller
 
         return  $res->send();
     }
+
+
+
 
 
     public function deshabilitarBecado(  $id)

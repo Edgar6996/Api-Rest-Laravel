@@ -26,6 +26,8 @@ class DiarioController extends Controller
             }
         }
 
+
+
         $diario_actual->actualizarTotalRaciones();
         $res->setData($diario_actual);
         return $res->send();
