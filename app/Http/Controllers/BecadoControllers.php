@@ -84,19 +84,7 @@ class BecadoControllers extends Controller
             ->first();
         if($stored){
             # Ya existe el becado, procedemos a actualizarlo
-            // Nota: solo actualizamos los datos del becado, no su clave ni nada
-            $stored->update($becadoRequest);
-            try {
-                $stored->saveOrFail();
-
-                return $res->setMessage("El becado ya existe. Sus datos fueron actualizados.")
-                    ->send();
-            } catch (\Throwable $e) {
-                AppLogs::addError("Error al actualizar el becado desde @store",$e,[
-                    'params' => $becadoRequest
-                ]);
-                return $res->setCode(409)->setMessage("No fue posible actualizar el becado.")->send();
-            }
+           return $this->_updateWhenExists($stored,$becadoRequest, $res);
 
 
         }
@@ -418,5 +406,35 @@ class BecadoControllers extends Controller
         }
 
         return  $res->send();
+    }
+
+    private function _updateWhenExists(Becado $becado, array $datos, ApiMessage $res)
+    {
+
+        // Nota: solo actualizamos los datos del becado, no su clave ni nada
+        $becado->update($datos);
+        try {
+            $becado->saveOrFail();
+            # Si se indico el calendario, tambien lo actualizamos
+            if(key_exists('calendario',$datos)){
+                $cal = $becado->calendario()->first();
+                if($cal){
+                    $cal->update($datos['calendario']);
+                    $cal->saveOrFail();
+                }else{
+                    # no tiene calendario, lo creamos
+                    $becado->calendario()->create($datos['calendario']);
+                }
+            }
+
+            return $res->setMessage("El becado ya existe. Sus datos fueron actualizados.")
+                ->send();
+        } catch (\Throwable $e) {
+            AppLogs::addError("Error al actualizar el becado desde @store",$e,[
+                'params' => $datos
+            ]);
+            return $res->setCode(409)->setMessage("No fue posible actualizar el becado.")->send();
+        }
+
     }
 }
