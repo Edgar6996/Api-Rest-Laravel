@@ -11,12 +11,13 @@ deploy_testing:
   only:
     - develop
 
-# Enable this when production server up
 
-#deploy_production:
-#  stage: deploy
-#  script:
-#    - wget -nv -O log.txt ""
-#    - cat log.txt
-#  only:
-#    - master
+# Enable this when production server up
+deploy_production:
+ stage: deploy
+ script:
+   - wget -nv -O log.txt "$SERVER_UPDATE_URL"
+   - cat log.txt
+ environment: production
+ only:
+   - master
