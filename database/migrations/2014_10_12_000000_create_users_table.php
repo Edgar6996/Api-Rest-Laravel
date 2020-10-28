@@ -6,6 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateUsersTable extends Migration
 {
+    const USER_TYPE_ADMIN = 123;
+
+
+
+
     /**
      * Run the migrations.
      *
@@ -15,14 +20,21 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('username')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
+
+            $table->integer('rol')->default(0);
+
             $table->rememberToken();
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.
