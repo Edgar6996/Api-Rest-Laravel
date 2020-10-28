@@ -10,7 +10,7 @@ Route::get('/becados/{becado}', [BecadoControllers::class, 'show']);        // L
 
 # Route::delete('/becados/{becado}', [BecadoControllers::class, 'destroy']);  // ELiminar becado
 
-Route::delete('/becados/{becado}',[BecadoControllers::class, 'deshabilitarBecado']);
+Route::delete('/becados/{becado}',[BecadoControllers::class, 'deshabilitarBecado'])->middleware('user.admin');
 
 // los Uploads los definimos con POST siempre.
 
