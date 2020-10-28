@@ -9,6 +9,7 @@ use App\Http\Requests\Becados\BecadosRequest;
 use App\Http\Requests\Becados\UploadHuellaRequest;
 use App\Http\Requests\Request\UpdateBecadoRequest;
 use App\Models\AppConfig;
+use App\Models\AppLogs;
 use App\Models\Becado;
 use App\Models\Calendario;
 use App\Models\User;
@@ -70,22 +71,37 @@ class BecadoControllers extends Controller
     {
         $res = new ApiMessage();
 
+        $becadoRequest = $request->validated();
+        $calendarioData = $becadoRequest['calendario'];
+
+
+        $dni = trim($request->get('dni'));
+
+
+        # Verificamos si existe un becado con ese dni
+        $stored = Becado::where('dni','=',$dni)
+            ->orWhere('email','=',$request->get('email'))
+            ->first();
+        if($stored){
+            # Ya existe el becado, procedemos a actualizarlo
+           return $this->_updateWhenExists($stored,$becadoRequest, $res);
+
+
+        }
+
+
+        // El usuario lo creamos con user y password DNI/DNI
+        $user = [
+            'name' => $becadoRequest['nombres'],
+            'email' => $request->get('email'),
+            'username' => strval($dni),
+            'password' => Hash::make($dni),
+            'rol' => TiposUsuarios::BECADO,
+        ];
+
+
+
         try {
-            $becadoRequest = $request->validated();
-            $calendarioData = $becadoRequest['calendario'];
-
-            // Crea el usuario de becado
-            $dni = trim($request->get('dni'));
-            // El usuario lo creamos con user y password DNI/DNI
-
-            $user = [
-                'name' => $becadoRequest['nombres'],
-                'email' => $request->get('email'),
-                'username' => strval($dni),
-                'password' => Hash::make($dni),
-                'rol' => TiposUsuarios::BECADO,
-            ];
-
             // Iniciamos la transaccion para que todos los inserts se registren o si falla, no se registre ninguno
             # Las transacciones debemos emplear siempre que se registren o actualizen mas de un modelo en la base de datos.
             \DB::beginTransaction();
@@ -294,10 +310,21 @@ class BecadoControllers extends Controller
     public function update(UpdateBecadoRequest $request, $id)
     {
         $res = new ApiMessage();
-        $datos = $request->validated();
-
         # obtengo el becacdo
         $becado = Becado::findOrFail($id);
+
+        # Verificamos los permisos
+        $user = Auth::user();
+        # si no es el mismo usuario ni el Lector o un Root user, prohinimos
+        if($becado->user_id != $user->id && !in_array($user->rol,[TiposUsuarios::ROOT, TiposUsuarios::LECTOR_HUELLA])){
+            return $res->setCode(403)
+                ->setMessage("Acceso denegado")->send();
+        }
+
+
+        $datos = $request->validated();
+
+
 
         # Actualizamos los datos
         $becado->update($datos);
@@ -319,6 +346,9 @@ class BecadoControllers extends Controller
 
         return  $res->send();
     }
+
+
+
 
 
     public function deshabilitarBecado(  $id)
@@ -376,5 +406,35 @@ class BecadoControllers extends Controller
         }
 
         return  $res->send();
+    }
+
+    private function _updateWhenExists(Becado $becado, array $datos, ApiMessage $res)
+    {
+
+        // Nota: solo actualizamos los datos del becado, no su clave ni nada
+        $becado->update($datos);
+        try {
+            $becado->saveOrFail();
+            # Si se indico el calendario, tambien lo actualizamos
+            if(key_exists('calendario',$datos)){
+                $cal = $becado->calendario()->first();
+                if($cal){
+                    $cal->update($datos['calendario']);
+                    $cal->saveOrFail();
+                }else{
+                    # no tiene calendario, lo creamos
+                    $becado->calendario()->create($datos['calendario']);
+                }
+            }
+
+            return $res->setMessage("El becado ya existe. Sus datos fueron actualizados.")
+                ->send();
+        } catch (\Throwable $e) {
+            AppLogs::addError("Error al actualizar el becado desde @store",$e,[
+                'params' => $datos
+            ]);
+            return $res->setCode(409)->setMessage("No fue posible actualizar el becado.")->send();
+        }
+
     }
 }
