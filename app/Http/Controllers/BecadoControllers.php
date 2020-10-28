@@ -413,8 +413,11 @@ class BecadoControllers extends Controller
 
         // Nota: solo actualizamos los datos del becado, no su clave ni nada
         $becado->update($datos);
+        // Si estaba dado de baja, lo volveremos a habilitar
+        $becado->estado = EstadoBecados::REGISTRO_INCOMPLETO;
         try {
             $becado->saveOrFail();
+
             # Si se indico el calendario, tambien lo actualizamos
             if(key_exists('calendario',$datos)){
                 $cal = $becado->calendario()->first();
@@ -426,7 +429,7 @@ class BecadoControllers extends Controller
                     $becado->calendario()->create($datos['calendario']);
                 }
             }
-
+            $becado->checkRegistroCompletado();
             return $res->setMessage("El becado ya existe. Sus datos fueron actualizados.")
                 ->send();
         } catch (\Throwable $e) {
