@@ -62,6 +62,14 @@ class DiariosService
 
       $nombre_dia = $fecha_diario->dayName;
 
+      # Al nombre del día, tenemos que quitarle todas las tíldes.
+        $nombre_dia = str_replace(
+            ['miércoles', 'sábado'],
+            ['miercoles', 'sabado'],
+            $nombre_dia
+        );
+
+
       $tipo = $fecha_diario->hour>12 ?  'noche':'dia';
 
       $key_dia = $nombre_dia."_".$tipo;
