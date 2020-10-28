@@ -20,7 +20,7 @@ class Huella extends Model
     # Atributos que se pueden setear con create()
     protected $fillable = [
         'size_template', 'img_width', 'img_height',
-        'template_huella'
+        'template_huella', 'img_huella'
     ];
 
     protected $hidden = [
