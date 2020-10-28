@@ -37,3 +37,4 @@ Se debe ejecutar cada vez que se grege una nueva librería o plugin.*
 
 
 
+certbot --nginx -d comedor.uncaus.edu.ar  -d www.comedor.uncaus.edu.ar 
