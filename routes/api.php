@@ -33,10 +33,11 @@ Route::middleware('auth:api')->group(function () {
 Route::get('prueba', function () {
 
     $res = new ApiMessage();
+    $settings = \App\Models\AppConfig::getConfig();
 
-    $res->setMessage("Ruta de prueba");
+    $res->setData($settings);
 
     return $res->send();
 
 
-})->middleware('auth:api','user.lector');
+});
