@@ -23,6 +23,9 @@ class Huella extends Model
         'template_huella', 'img_huella'
     ];
 
+    protected $hidden = [
+        'img_huella'
+    ];
 
 
 

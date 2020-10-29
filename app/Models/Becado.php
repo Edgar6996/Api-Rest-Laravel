@@ -104,10 +104,8 @@ class Becado extends Model
             return  true; // ya esta ACTIVO
         }
 
-        # Para completar el registro, debe tener una foto, y la huella cargada.
-        if ($this->foto == null) {
-            return  false; // no tiene la foto
-        }
+        # Para completar el registro, debe tener la huella cargada.
+        // la foto ya no es requisito
 
         # Verificamos las huellas, debe tener dos
         $total = $this->huellas()->count();
