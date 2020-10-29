@@ -109,7 +109,7 @@ class Becado extends Model
 
         # Verificamos las huellas, debe tener dos
         $total = $this->huellas()->count();
-        if(!$total < 2) return  false;
+        if($total < 2) return  false;
 
         // Se cumplieron todas las condiciones, actualizamos el estado
         $this->estado = EstadoBecados::ACTIVO;
