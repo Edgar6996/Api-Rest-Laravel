@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Core\Services\DiariosService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -42,7 +43,13 @@ class Diario extends Model
     }
 
     public static function diarioActual(){
-       return Diario::orderBy('fecha', 'DESC')->first();
+       $diarioActual = Diario::orderBy('fecha', 'DESC')->first();
+    //    if (!$diarioActual) {
+    //         $servicio = new DiariosService();
+    //         $servicio->generarProximoDiario();
+    //    }
+
+       return $diarioActual;
     }
 
     public function calcularRacionesDisponibles(){

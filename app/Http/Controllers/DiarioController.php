@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Core\Services\DiariosService;
 use App\Core\Tools\ApiMessage;
 use App\Models\AppLogs;
+use App\Models\Becado;
 use App\Models\Diario;
 use Illuminate\Http\Request;
 
@@ -41,6 +42,25 @@ class DiarioController extends Controller
         $raciones_disponible = $diario_actual->calcularRacionesDisponibles();
 
         return $res->setData(['total' => $raciones_disponible])->send();
+   }
+
+   public function showReservaActual(Request $request)
+   {
+       $res = new ApiMessage();
+       $becado = Becado::getBecadoActual();
+       $diarioActual = Diario::diarioActual();
+
+       if (!$becado) {
+          return $res->setCode(404)->setMessage('El usuario actual no es becado')->send();
+       }
+
+       $reserva = $diarioActual->detalleDiario()->where('becado_id', $becado->id)->first();
+
+       if (!$reserva) {
+            return $res->setCode(404)->setMessage('El usuario actual no tiene una reserva')->send();
+       }
+
+       return $res->setData($reserva)->send();
    }
 
 	public function crearProximoDiario() {

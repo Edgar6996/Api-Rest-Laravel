@@ -129,4 +129,15 @@ class Becado extends Model
             $q->where('id', '=', $calendario_id);
         })->first();
     }
+
+     /**
+     * Busca un becado a partir del id de el usuario asociado. Devuelve Null si no lo encuentra.
+     *
+     * @return Becado|Builder|Model|object|null
+     */
+    public static function getBecadoActual()
+    {
+        return Becado::where('user_id', \Auth::id())->first();
+    }
+
 }
