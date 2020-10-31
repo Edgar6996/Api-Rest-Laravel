@@ -35,4 +35,6 @@ Se debe ejecutar cada vez que se grege una nueva librería o plugin.*
 ##### Crear un Enum
 > `php artisan make:enum NombreMiEnum`
  
+systemctl restart sshd
+
 
