@@ -356,6 +356,14 @@ class BecadoControllers extends Controller
     {
         $res = new ApiMessage();
 
+        # Verificamos los permisos
+        $user = Auth::user();
+        # Si no es el Lector o un admin user, prohibimos
+        if(!in_array($user->rol,[TiposUsuarios::ADMINISTRADOR, TiposUsuarios::LECTOR_HUELLA])){
+            return $res->setCode(403)
+                ->setMessage("Acceso denegado")->send();
+        }
+
         # obtengo el becacdo
         $becado = Becado::find($id);
 
