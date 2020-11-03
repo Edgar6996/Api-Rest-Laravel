@@ -22,16 +22,16 @@ class DiarioController extends Controller
             # no hay diario actuak
             $service = new DiariosService();
             try {
-                
+
                 $diario_actual = $service->generarProximoDiario();
-        
+
             } catch (\Exception $e) {
                 AppLogs::addError("No fue posible crear el próximo diario.",$e);
 
                 return $res->setCode(500)->setMessage("No hay un diario actual y no fué posible crearlo.")->send();
             }
         }
-        
+
         $diario_actual->actualizarTotalRaciones();
         $res->setData($diario_actual);
         return $res->send();
@@ -74,22 +74,24 @@ class DiarioController extends Controller
             return $e->getMessage();
 		}
     }
-    
+
+    /**
+     * Cancela una reserva DEL DIARIO ACTUAL
+     */
     public function cancelarReserva($id_reserva){
         $res = new ApiMessage();
-        $diario = new Diario;
-
+        $diario = Diario::diarioActual();
         $hora_limite = $diario->horaLimite();
         $hora_actual = Carbon::now();
 
-        if($hora_actual->gt($hora_limite)){ 
+        if($hora_actual->gt($hora_limite)){
             return $res->setCode(409)->setMessage("No puede cancelar la reserva")->send();
         }
 
         $reserva = DetalleDiario::find($id_reserva);
 
         $reserva->delete();
-            
+
         return $res->setMessage("Se elimino la reserva")->send();
     }
 }

@@ -43,6 +43,9 @@ class Diario extends Model
     	return $this->hasMany(DetalleDiario::class, 'diario_id');
     }
 
+    /**
+     * @return Model|\Illuminate\Database\Query\Builder|object|null|Diario
+     */
     public static function diarioActual(){
        $diarioActual = Diario::orderBy('fecha', 'DESC')->first();
     //    if (!$diarioActual) {
@@ -67,16 +70,19 @@ class Diario extends Model
         $this->save();
     }
 
+    /**
+     * @return Carbon
+     */
     public function horaLimite(){
+        $hs_config = AppConfig::getConfig();
 
-        $hs_config = new AppConfig;
-        $diario_actual = Diario::diarioActual();
+        // 00:00:00
+        $horas_restar = $hs_config->limite_horas_cancelar_reserva;
+        # Convertimos el time en un objeto Carbon
+        $horas_restar = Carbon::parse($horas_restar);
 
-        $hora_comida = $diario_actual->fecha->hour;
-
-        $hora = $hora_comida - $hs_config->value('limite_horas_cancelar_reserva');
-
-        $hora_limite = Carbon::now()->setTime($hora,0,0);
+        $hora_limite = $this->fecha->subHours($horas_restar->hour);
+        $hora_limite->subMinutes($horas_restar->minute);
 
         return $hora_limite;
     }
