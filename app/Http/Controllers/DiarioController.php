@@ -92,4 +92,20 @@ class DiarioController extends Controller
             
         return $res->setMessage("Se elimino la reserva")->send();
     }
+
+    public function cargarMenu(Request $request){
+        $res = new ApiMessage;
+
+        $validatedData = $request->validate([
+            'menu_comida' => 'required|string|max:255',
+        ]);
+        
+        $diario_actual = Diario::diarioActual();
+
+        $diario_actual->update($validatedData);
+
+        return $res->setData($diario_actual)->send();
+         
+    }
+
 }
