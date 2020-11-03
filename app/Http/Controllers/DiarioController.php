@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Core\Services\DiariosService;
 use App\Core\Tools\ApiMessage;
+use Carbon\Carbon;
 use App\Models\AppLogs;
+use App\Models\Becado;
+use App\Models\DetalleDiario;
 use App\Models\Diario;
 use Illuminate\Http\Request;
 
@@ -14,20 +17,21 @@ class DiarioController extends Controller
     {
         $res = new ApiMessage($request);
         $diario_actual = Diario::diarioActual();
+
         if(!$diario_actual){
             # no hay diario actuak
             $service = new DiariosService();
             try {
+                
                 $diario_actual = $service->generarProximoDiario();
+        
             } catch (\Exception $e) {
                 AppLogs::addError("No fue posible crear el próximo diario.",$e);
 
                 return $res->setCode(500)->setMessage("No hay un diario actual y no fué posible crearlo.")->send();
             }
         }
-
-
-
+        
         $diario_actual->actualizarTotalRaciones();
         $res->setData($diario_actual);
         return $res->send();
@@ -43,6 +47,25 @@ class DiarioController extends Controller
         return $res->setData(['total' => $raciones_disponible])->send();
    }
 
+   public function showReservaActual(Request $request)
+   {
+       $res = new ApiMessage();
+       $becado = Becado::getBecadoActual();
+       $diarioActual = Diario::diarioActual();
+
+       if (!$becado) {
+          return $res->setCode(404)->setMessage('El usuario actual no es becado')->send();
+       }
+
+       $reserva = $diarioActual->detalleDiario()->where('becado_id', $becado->id)->first();
+
+       if (!$reserva) {
+            return $res->setCode(404)->setMessage('El usuario actual no tiene una reserva')->send();
+       }
+
+       return $res->setData($reserva)->send();
+   }
+
 	public function crearProximoDiario() {
 		try {
              $diario = new DiariosService();
@@ -50,5 +73,23 @@ class DiarioController extends Controller
         } catch (\Exception $e){
             return $e->getMessage();
 		}
-	}
+    }
+    
+    public function cancelarReserva($id_reserva){
+        $res = new ApiMessage();
+        $diario = new Diario;
+
+        $hora_limite = $diario->horaLimite();
+        $hora_actual = Carbon::now();
+
+        if($hora_actual->gt($hora_limite)){ 
+            return $res->setCode(409)->setMessage("No puede cancelar la reserva")->send();
+        }
+
+        $reserva = DetalleDiario::find($id_reserva);
+
+        $reserva->delete();
+            
+        return $res->setMessage("Se elimino la reserva")->send();
+    }
 }

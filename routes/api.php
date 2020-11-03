@@ -18,6 +18,7 @@ Route::middleware('auth:api')->group(function () {
     require_once "api-routes/becados.routes.php"; // Rutas becado requeridas
     require_once "api-routes/calendario.routes.php"; // Rutas calendario becado requeridas
     require_once "api-routes/diarios.routes.php";
+    require_once "api-routes/config.routes.php";
 
     # Rutas exclusivas para administradores
     require_once "api-routes/admin.routes.php";

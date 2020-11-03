@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Core\Services\DiariosService;
+use App\Models\AppConfig;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,7 +27,7 @@ class Diario extends Model
     protected $dates = ['fecha'];
 
     protected $fillable  = [
-       'fecha', 'horario_comida','total_raciones',
+       'fecha', 'horario_comida', 'menu_comida','total_raciones',
     ];
 
     protected $casts = [
@@ -42,7 +44,13 @@ class Diario extends Model
     }
 
     public static function diarioActual(){
-       return Diario::orderBy('fecha', 'DESC')->first();
+       $diarioActual = Diario::orderBy('fecha', 'DESC')->first();
+    //    if (!$diarioActual) {
+    //         $servicio = new DiariosService();
+    //         $servicio->generarProximoDiario();
+    //    }
+
+       return $diarioActual;
     }
 
     public function calcularRacionesDisponibles(){
@@ -57,5 +65,19 @@ class Diario extends Model
         $this->total_raciones = $total;
 
         $this->save();
+    }
+
+    public function horaLimite(){
+
+        $hs_config = new AppConfig;
+        $diario_actual = Diario::diarioActual();
+
+        $hora_comida = $diario_actual->fecha->hour;
+
+        $hora = $hora_comida - $hs_config->value('limite_horas_cancelar_reserva');
+
+        $hora_limite = Carbon::now()->setTime($hora,0,0);
+
+        return $hora_limite;
     }
 }

@@ -3,14 +3,16 @@
 use App\Http\Controllers\BecadoControllers;
 
 
-Route::get('/becados', [BecadoControllers::class, 'index']);                // Listar
+Route::get('/becados', [BecadoControllers::class, 'index'])->middleware('user.admin');                // Listar
 Route::get('/becados-completo', [BecadoControllers::class, 'becadosCompleto'])->middleware('user.lector');             // Listar
 Route::put('/becados/{becado}', [BecadoControllers::class, 'update']);      // Actualizar
 Route::get('/becados/{becado}', [BecadoControllers::class, 'show']);        // Listar becado individual
 
 # Route::delete('/becados/{becado}', [BecadoControllers::class, 'destroy']);  // ELiminar becado
 
-Route::delete('/becados/{becado}',[BecadoControllers::class, 'deshabilitarBecado'])->middleware('user.admin');
+// quitamos el middleware de esta ruta y lo  manejamos en el controller
+Route::delete('/becados/{becado}',[BecadoControllers::class, 'deshabilitarBecado']); 
+
 
 // los Uploads los definimos con POST siempre.
 

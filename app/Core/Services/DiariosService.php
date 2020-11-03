@@ -18,26 +18,27 @@ class DiariosService
 	public function generarProximoDiario()
   	{
 
-      $diario_actual = Diario::diarioActual();
+        $diario_actual = Diario::diarioActual();
 
     	$fecha_diario = $this->proximoComida();
 
-      if($diario_actual != NULL && $fecha_diario->eq($diario_actual->fecha)){
-          throw new \Exception("ya se ha generado el diario");
-      }
+        if($diario_actual != NULL && $fecha_diario->eq($diario_actual->fecha)){
+            throw new \Exception("ya se ha generado el diario");
+        }
 
-      \DB::beginTransaction();
+        \DB::beginTransaction();
 
     	$diario_prox = Diario::create([
         'fecha' => $fecha_diario,
         'horario_comida' => $this->keyDia(),
         'total_raciones' => 0,
+        'menu_comida' => "",
     	]);
 
-      $this->crearDetalleDiario($diario_prox);
+        $this->crearDetalleDiario($diario_prox);
 
-      \DB::commit();
-      return $diario_prox;
+        \DB::commit();
+        return $diario_prox;
   	}
 
   	private function proximoComida()
