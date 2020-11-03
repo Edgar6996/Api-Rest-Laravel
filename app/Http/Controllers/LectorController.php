@@ -19,12 +19,14 @@ class LectorController extends Controller
         $res = new ApiMessage($request);
         $user = User::getLectorUser();
 
-        if($request->get('mantener_actuales') != 1){
+        # Ahora, por defecto, mantenemos los tokens previos
+        if($request->get('eliminar_actuales') == 1){
             # Anulamos los tokens actuales
             $currentTokens = $user->tokens()->get();
             foreach ($currentTokens as $token) {
                 $token->revoke();
             }
+            $res->addLog("Se han revocado los tokens previos");
         }
 
         Passport::personalAccessTokensExpireIn(now()->addYear());
