@@ -2,6 +2,7 @@
 
 use App\Core\Tools\ApiMessage;
 use App\Http\Controllers\BecadoControllers;
+use App\Models\Diario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Passport\Passport;
@@ -23,7 +24,7 @@ Route::middleware('auth:api')->group(function () {
     # Rutas exclusivas para administradores
     require_once "api-routes/admin.routes.php";
  });
- 
+
 
 
 
@@ -34,9 +35,11 @@ Route::middleware('auth:api')->group(function () {
 Route::get('prueba', function () {
 
     $res = new ApiMessage();
-    $settings = \App\Models\AppConfig::getConfig();
 
-    $res->setData($settings);
+    $diario = new Diario; //
+    $hora_limite = $diario->horaLimite();
+
+
 
     return $res->send();
 
