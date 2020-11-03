@@ -26,6 +26,8 @@ class Diario extends Model
 
     protected $dates = ['fecha'];
 
+    protected $appends = ["horario_limite"];
+
     protected $fillable  = [
        'fecha', 'horario_comida', 'menu_comida','total_raciones',
     ];
@@ -33,6 +35,11 @@ class Diario extends Model
     protected $casts = [
         'total_raciones' => 'integer'
     ];
+
+    public function getHorarioLimiteAttribute()
+    {
+        return $this->horaLimite();
+    }
 
     #Relaciones
     public function registro(){
