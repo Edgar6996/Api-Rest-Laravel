@@ -21,11 +21,11 @@ class ConfigController extends Controller
         $res = new ApiMessage;
 
         $validateData = $request->validate([
-            'max_porciones_becado' => 'int|max:3',
-            'max_porciones_quirofano' => 'int|max:100',
+            'max_porciones_becado' => 'numeric',
+            'max_porciones_quirofano' => 'numeric',
     
-            'max_faltas' => 'int|max:3',
-            'castigo_duracion_dias' => 'int|max:10',
+            'max_faltas' => 'numeric',
+            'castigo_duracion_dias' => 'numeric',
     
             'limite_horas_cancelar_reserva' => 'date',
             'hora_cena'=> 'date',
