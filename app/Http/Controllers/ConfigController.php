@@ -19,6 +19,7 @@ class ConfigController extends Controller
     public function update(Request $request){
 
         $res = new ApiMessage;
+        $config = AppConfig::getConfig();
 
         $validateData = $request->validate([
             'max_porciones_becado' => 'numeric',
@@ -27,12 +28,12 @@ class ConfigController extends Controller
             'max_faltas' => 'numeric',
             'castigo_duracion_dias' => 'numeric',
     
-            'limite_horas_cancelar_reserva' => 'date',
-            'hora_cena'=> 'date',
-            'hora_almuerzo' => 'date'
+            'limite_horas_cancelar_reserva' => 'date_format:"H:i:s"',
+            'hora_cena'=> 'date_format:"H:i:s"',
+            'hora_almuerzo' => 'date_format:"H:i:s"'
         ]);
 
-        $config = AppConfig::getConfig();
+        
 
         $config->update($validateData);
 
