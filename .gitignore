@@ -12,5 +12,5 @@ npm-debug.log
 yarn-error.log
 
 .idea
-public/ci-update.php
+public/ci-*.php
 composer.lock
