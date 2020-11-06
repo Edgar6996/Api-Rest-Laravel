@@ -25,10 +25,11 @@ class UpdateBecadoRequest extends FormRequest
     public function rules()
     {
         return [
-            'dni' => 'required|string|8',
-            'nombres' => 'required|string|max:30',
-            'apellidos' => 'required|string|max:50',
-            'email' => 'required|email',
+            'dni' => 'string|min:8',
+            'nombres' => 'string|max:30',
+            'apellidos' => 'string|max:50',
+            'email' => 'email',
+            'telefono'=> 'numeric',
         ];
     }
 }
