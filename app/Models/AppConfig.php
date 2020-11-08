@@ -23,9 +23,11 @@ class AppConfig extends Model
     protected $attributes = [
         'max_porciones_becado' => 3,
         'max_porciones_quirofano' => 100,
-        'limite_horas_cancelar_reserva' => 2,
+
         'max_faltas' => 3,
         'castigo_duracion_dias' => 10,
+
+        'limite_horas_cancelar_reserva' => "02:00:00",
         'hora_cena'=> "20:00:00",
         'hora_almuerzo' => "12:00:00"
     ];

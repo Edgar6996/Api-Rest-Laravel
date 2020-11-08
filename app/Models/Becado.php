@@ -46,6 +46,22 @@ class Becado extends Model
     # Nos permite indicar relaciones que se obtengan de forma automatica
     # protected $with = ['calendario'];
 
+
+    # Getters & Setters
+    public function getNombresAttribute()
+    {
+        return ucwords(mb_strtolower($this->attributes['nombres']));
+    }
+
+    public function getApellidosAttribute()
+    {
+        return ucwords(mb_strtolower($this->attributes['apellidos']));
+    }
+
+
+
+
+
     #relaciones
 
     public function cuenta()

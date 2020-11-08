@@ -317,7 +317,7 @@ class BecadoControllers extends Controller
         # Verificamos los permisos
         $user = Auth::user();
         # si no es el mismo usuario ni el Lector o un Root user, prohinimos
-        if($becado->user_id != $user->id && !in_array($user->rol,[TiposUsuarios::ROOT, TiposUsuarios::LECTOR_HUELLA])){
+        if($becado->user_id != $user->id && !in_array($user->rol,[TiposUsuarios::ADMINISTRADOR  ,TiposUsuarios::ROOT, TiposUsuarios::LECTOR_HUELLA])){
             return $res->setCode(403)
                 ->setMessage("Acceso denegado")->send();
         }
