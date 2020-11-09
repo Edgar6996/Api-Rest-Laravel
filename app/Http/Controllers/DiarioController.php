@@ -110,4 +110,17 @@ class DiarioController extends Controller
          
     }
 
+    public function showReservaActualByBecadoId(Request $request, $becado_id)
+    {
+        $res = new ApiMessage();
+ 
+        $reserva =Becado::reservaActual($becado_id);
+ 
+        if (!$reserva) {
+             return $res->setCode(404)->setMessage('El becado no cuenta con una reserva para el diario actual')->send();
+        }
+ 
+        return $res->setData($reserva)->send();
+    }
+
 }

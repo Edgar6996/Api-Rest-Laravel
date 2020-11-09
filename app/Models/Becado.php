@@ -156,4 +156,16 @@ class Becado extends Model
         return Becado::where('user_id', \Auth::id())->first();
     }
 
+     /**
+     * Busca una reservaActual del becado a partir de su ID. Devuelve Null si no lo encuentra.
+     *
+     * @return Becado|Builder|Model|object|null
+     */
+    public static function reservaActual($becadoId)
+    {
+        $diarioActual = Diario::diarioActual();
+
+        return $diarioActual->detalleDiario()->where('becado_id', $becadoId)->first();
+    }
+
 }
