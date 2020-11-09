@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Users;
 
 use App\Core\Tools\ApiMessage;
+use App\Http\Requests\RegistroUsuariosRequest;
 use App\Models\User;
 use Auth;
 use Illuminate\Http\File;
@@ -43,10 +44,6 @@ class UsersController extends Controller
 
         return $res->send();
     }
-
-
-
-
 
     public function updateAvatarImage(Request $request)
     {
@@ -141,4 +138,35 @@ class UsersController extends Controller
         return $res->send();
     }
 
+    public function registrarUsuario(RegistroUsuariosRequest $request )
+    {
+        $res = new ApiMessage($request);
+        /** @var User $currentUser */
+        $currentUser = Auth::user();
+        if (!$currentUser->isRoot()) {
+            return $res->setCode(403)
+                ->setMessage("No tiene permisos para realizar esta operación.")->send();
+        }
+        $data = $request->validated();
+
+
+        try {
+            $user = new User($data);
+            $user->password = Hash::make($data['password']);
+            $user->saveOrFail();
+            $res->setMessage("Usuario registrado");
+        } catch (\Throwable $e) {
+            return $res->setCode(409)->setMessage("Se ha producido un error.")
+                ->addError($e->getMessage())
+                ->send();
+        }
+
+
+
+
+
+
+
+        return $res->send();
+    }
 }
