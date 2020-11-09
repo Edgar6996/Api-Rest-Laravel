@@ -86,5 +86,23 @@ class User extends Authenticatable
         ]);
     }
 
+
+    public function isAdmin()
+    {
+        return in_array($this->rol, [
+            TiposUsuarios::ADMINISTRADOR,
+            TiposUsuarios::ROOT
+        ]);
+    }
+
+    public function isRoot()
+    {
+        return $this->rol === TiposUsuarios::ROOT;
+    }
+
+    public function isBecado()
+    {
+        return $this->rol === TiposUsuarios::BECADO;
+    }
 }
 
