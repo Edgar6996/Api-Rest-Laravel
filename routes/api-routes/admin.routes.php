@@ -13,9 +13,11 @@ Route:: middleware('user.admin')->prefix('admin')->group(function () {
     Route::post('crear-diario', [DiarioController::class, 'crearProximoDiario']);
 
     Route::get('users',[UsersController::class, "index"]);
-
+    Route::post("users/nuevo",[UsersController::class, "registrarUsuario"]);
 
     Route::get('logs', [AdminController::class,'indexAppLogs']);
+
+
 
 
     Route::get('check-becados', function () {
@@ -32,5 +34,4 @@ Route:: middleware('user.admin')->prefix('admin')->group(function () {
         return $res->send();
     });
 
-    Route::post("users",[UsersController::class, "registrarUsuario"]);
 });
