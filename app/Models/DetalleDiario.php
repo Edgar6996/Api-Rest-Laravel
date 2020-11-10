@@ -7,6 +7,11 @@ use App\Models\Diario;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class DetalleDiario
+ * @package App\Models
+ * @mixin  \Eloquent
+ */
 class DetalleDiario extends Model
 {
     use HasFactory;
