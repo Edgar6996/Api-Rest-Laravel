@@ -90,7 +90,12 @@ class DiarioController extends Controller
 
         $reserva = DetalleDiario::find($id_reserva);
 
-        $reserva->delete();
+        try {
+            $reserva->delete();
+            $diario->actualizarTotalRaciones();
+        } catch (\Exception $e) {
+            return $res->setCode(409)->setMessage("No fué posible cancelar la reserva.")->send();
+        }
 
         return $res->setMessage("Se elimino la reserva")->send();
     }
@@ -101,13 +106,13 @@ class DiarioController extends Controller
         $validatedData = $request->validate([
             'menu_comida' => 'required|string|max:255',
         ]);
-        
+
         $diario_actual = Diario::diarioActual();
 
         $diario_actual->update($validatedData);
 
         return $res->setData($diario_actual)->send();
-         
+
     }
 
 }

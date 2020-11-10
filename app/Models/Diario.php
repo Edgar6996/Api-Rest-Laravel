@@ -64,9 +64,11 @@ class Diario extends Model
     }
 
     public function calcularRacionesDisponibles(){
-        $retirado = $this->detalleDiario()->where('retirado',1)->sum('raciones');
+        $retirado = $this->detalleDiario()
+            ->where('retirado',1)
+            ->sum('raciones');
 
-        return $this->total_raciones-$retirado;
+        return $this->total_raciones - $retirado;
     }
 
     public function actualizarTotalRaciones(){
