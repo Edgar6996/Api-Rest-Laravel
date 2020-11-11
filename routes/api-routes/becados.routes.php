@@ -4,7 +4,8 @@ use App\Http\Controllers\BecadoControllers;
 
 
 Route::get('/becados', [BecadoControllers::class, 'index'])->middleware('user.admin');                // Listar
-Route::get('/becados-completo', [BecadoControllers::class, 'becadosCompleto'])->middleware('user.lector');             // Listar
+Route::get('/becados-completo', [BecadoControllers::class, 'becadosCompleto'])->middleware('user.lector'); // Listar
+Route::get('/becados-reserva', [BecadoControllers::class, 'becadosConReserva'])->middleware('user.admin'); // Listar
 Route::put('/becados/{becado}', [BecadoControllers::class, 'update']);      // Actualizar
 Route::get('/becados/{becado}', [BecadoControllers::class, 'show']);        // Listar becado individual
 
