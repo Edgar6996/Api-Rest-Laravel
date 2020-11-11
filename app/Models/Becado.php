@@ -88,6 +88,10 @@ class Becado extends Model
         return $this->hasMany(DetalleDiario::class, 'becado_id');
     }
 
+    public function ultimoDetalleDiario(){
+        return $this->hasOne(DetalleDiario::class, 'becado_id')->latest();
+    }
+
     # Scopes
     public function scopeActivos(Builder $query)
     {
