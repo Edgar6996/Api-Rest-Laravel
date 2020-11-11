@@ -31,8 +31,6 @@ class Calendario extends Model
     	return $this->belongsTo(Becado::class, 'becado_id');
     }
 
-
-
     /**
      * Esta funcion se ejecuta cuando se crea una instancia del modelo,
      * similar al constructor de una clase
@@ -48,4 +46,30 @@ class Calendario extends Model
         });
 
     }
+
+    public static function actualizarLimiteDeRaciones($categoria_becado, $max_raciones)
+    {   
+        
+        $dias = [
+            "lunes_dia","lunes_noche",
+            "martes_dia","martes_noche",
+            "miercoles_dia","miercoles_noche",
+            "jueves_dia","jueves_noche",
+            "viernes_dia","viernes_noche",
+            "sabado_dia","sabado_noche",
+            "domingo_dia","domingo_noche",
+          ];
+         
+        
+        foreach ($dias as $dia) 
+        {
+            Calendario::whereHas('becado', function (Builder $query) use($categoria_becado){
+                $query->where('categoria', $categoria_becado);
+            })
+                ->where($dia,'>',$max_raciones)
+                ->update([ $dia => $max_raciones]);  
+        }
+
+    }
+
 }
