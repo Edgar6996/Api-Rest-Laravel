@@ -12,9 +12,11 @@ use App\Models\AppConfig;
 use App\Models\AppLogs;
 use App\Models\Becado;
 use App\Models\Calendario;
+use App\Models\Diario;
 use App\Models\User;
 use Auth;
 use Hash;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Storage;
 
@@ -60,6 +62,30 @@ class BecadoControllers extends Controller
         return  $res->send();
 
     }
+
+        /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function becadosConReserva(Request $request)
+    {
+        $res = new ApiMessage();
+        $idDiarioActual = Diario::diarioActual()->id;
+
+        $perPage = $request->get('per_page',5) ; // items por pagina
+
+        $becadosConRaciones = Becado::whereHas('ultimoDetalleDiario', function (Builder $query) use($idDiarioActual) {
+            $query->where('diario_id', $idDiarioActual);
+        })->with('ultimoDetalleDiario');
+
+        $lista = $becadosConRaciones->paginate($perPage);
+
+        $res->setData($lista);
+        return  $res->send();
+
+    }
+
 
     /**
      * Store a newly created resource in storage.
