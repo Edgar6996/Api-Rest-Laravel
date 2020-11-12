@@ -3,6 +3,7 @@
 namespace App\Core\Services;
 
 use App\Core\Tools\ApiMessage;
+use App\Models\AppConfig;
 use App\Models\Becado;
 use App\Models\Calendario;
 use App\Models\Diario;
@@ -43,10 +44,13 @@ class DiariosService
 
   	private function proximoComida()
   	{
+        //configuraciones
+        $almuerzo = Carbon::parse(AppConfig::getConfig()->hora_almuerzo);
+        $cena = Carbon::parse(AppConfig::getConfig()->hora_cena);
 
   		$hs_actual = Carbon::now();
-  		$hs_almuerzo = Carbon::now()->setTime(12,0,0);
-  		$hs_cena = Carbon::now()->setTime(20,0,0);
+  		$hs_almuerzo = Carbon::now()->setTime($almuerzo->hour,$almuerzo->minute,$almuerzo->second);
+  		$hs_cena = Carbon::now()->setTime($cena->hour,$cena->minute,$cena->second);
 
   		if($hs_almuerzo->gt($hs_actual)){
   			return $hs_almuerzo;
