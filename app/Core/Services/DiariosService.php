@@ -82,9 +82,13 @@ class DiariosService
       return $key_dia;
     }
 
+    /**
+     * Genera todas las reservas para el diario indicado, de todos los becados ACTIVOS que van a comer en ese diario.
+     * @param Diario $diario
+     */
     private function crearDetalleDiario(Diario $diario){
-      #buscamos los becados que comen en el dia actual
-      $lista_becados = Becado::whereHas('calendario', function($query) use($diario){
+      #buscamos los becados, ACTIVOS, que comen en el dia actual
+      $lista_becados = Becado::activos()->whereHas('calendario', function($query) use($diario){
           $query->where($diario->horario_comida, '>', 0); //todos los becados que tienen en su calendario en el campo raciones mayor a cero
       })->with('calendario:id,becado_id,'.$diario->horario_comida)->get();
 
