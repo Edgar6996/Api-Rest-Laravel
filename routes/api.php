@@ -1,8 +1,10 @@
 <?php
 
+use App\Core\Services\DiariosService;
 use App\Core\Tools\ApiMessage;
 use App\Http\Controllers\BecadoControllers;
 use App\Models\AppConfig;
+use App\Models\DetalleDiario;
 use App\Models\Diario;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -35,15 +37,8 @@ Route::middleware('auth:api')->group(function () {
 
 
 Route::get('prueba', function () {
-    //configuraciones
-    $almuerzo = Carbon::parse(AppConfig::getConfig()->hora_almuerzo);
-    $cena = Carbon::parse(AppConfig::getConfig()->hora_cena);
-
-    $hs_actual = Carbon::now();
-    $hs_almuerzo = Carbon::now()->setTime($almuerzo->hour,$almuerzo->minute,$almuerzo->second);
-    $hs_cena = Carbon::now()->setTime($cena->hour,$cena->minute,$cena->second);
-
-    dd($hs_almuerzo,$hs_cena,$hs_actual);
-
-
+       
+    $service = new DiariosService();
+    $service->procesarDiarios(); 
+    
 });

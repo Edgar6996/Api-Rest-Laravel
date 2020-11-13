@@ -22,7 +22,7 @@ class DetalleDiario extends Model
 
     public function becado(){
 
-    	return $this->hasOne(Becado::class,'becado_id');
+    	return $this->belongsTo(Becado::class,'becado_id');
     }
 
     public function diario(){
