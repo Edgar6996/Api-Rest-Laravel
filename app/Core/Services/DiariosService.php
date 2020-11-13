@@ -4,21 +4,35 @@ namespace App\Core\Services;
 
 use App\Core\Tools\ApiMessage;
 use App\Models\AppConfig;
+use App\Models\AppLogs;
 use App\Models\Becado;
 use App\Models\Calendario;
+use App\Models\DetalleDiario;
 use App\Models\Diario;
 use Carbon\Carbon;
 
 
+
 class DiariosService
 {
+  public function procesarDiarios(){
+    try{
+      $diario_actual = Diario::diarioActual();
+      $this->cerrarDiario($diario_actual);
+      
+      $item = $this->generarProximoDiario();
+      AppLogs::add("Nuevo diario creado: ". $item->horario_comida);
+  }catch (\Exception $e){
+      AppLogs::addError("Se ha producido un error al crear el próximo diario.",$e);
+  }
+  }
+
     /**
      * @return Diario
      * @throws \Exception
      */
 	public function generarProximoDiario()
   	{
-
         $diario_actual = Diario::diarioActual();
 
     	$fecha_diario = $this->proximoComida();
@@ -40,7 +54,32 @@ class DiariosService
 
         \DB::commit();
         return $diario_prox;
-  	}
+    }
+    
+    public function cerrarDiario(Diario $diario){
+        $lista_faltas = $diario->detalleDiario()
+              ->where('retirado','=', 0)->get();
+
+        $limite_faltas = AppConfig::getConfig()->max_faltas;
+
+        $contador = 0;
+        foreach($lista_faltas as $reserva){
+
+          $becado = $reserva->becado()->first();
+          $becado->increment('total_faltas');
+
+          if ($becado->total_faltas >= $limite_faltas) {
+              $contador++;
+              $this->suspenderBecado($becado);
+          }
+        }
+        $total_faltas = count($lista_faltas); 
+        AppLogs::add("Se registraron ".$total_faltas." suspendido: ".$contador);
+    }
+
+    private function suspenderBecado($becado){
+
+    }
 
   	private function proximoComida()
   	{
