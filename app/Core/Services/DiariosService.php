@@ -3,6 +3,7 @@
 namespace App\Core\Services;
 
 use App\Core\Tools\ApiMessage;
+use App\Enums\LogTypes;
 use App\Models\AppConfig;
 use App\Models\AppLogs;
 use App\Models\Becado;
@@ -63,20 +64,25 @@ class DiariosService
         $limite_faltas = AppConfig::getConfig()->max_faltas;
 
         $contador = 0;
+        $_logs = [];
         foreach($lista_faltas as $reserva){
 
           $becado = $reserva->becado()->first();
           $becado->increment('total_faltas');
 
           if ($becado->total_faltas >= $limite_faltas) {
-              AppLogs::add("El becado {$becado->id} ya tiene {$becado->total_faltas} faltas.");
+              $_logs[] = "El becado {$becado->id} ya tiene {$becado->total_faltas} faltas.";
 
               $contador++;
               $this->suspenderBecado($becado);
           }
         }
         $total_faltas = count($lista_faltas);
-        AppLogs::add("Se registraron ".$total_faltas." suspendido: ".$contador);
+        AppLogs::add("Se registraron ".$total_faltas." faltas. Suspendido: ".$contador,LogTypes::INFO,[
+            'logs' => $_logs
+        ]);
+
+
     }
 
     private function suspenderBecado(Becado $becado){
