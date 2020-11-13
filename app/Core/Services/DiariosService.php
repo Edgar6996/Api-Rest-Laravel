@@ -3,22 +3,37 @@
 namespace App\Core\Services;
 
 use App\Core\Tools\ApiMessage;
+use App\Enums\LogTypes;
 use App\Models\AppConfig;
+use App\Models\AppLogs;
 use App\Models\Becado;
 use App\Models\Calendario;
+use App\Models\DetalleDiario;
 use App\Models\Diario;
 use Carbon\Carbon;
 
 
+
 class DiariosService
 {
+  public function procesarDiarios(){
+    try{
+      $diario_actual = Diario::diarioActual();
+      $this->cerrarDiario($diario_actual);
+
+      $item = $this->generarProximoDiario();
+      AppLogs::add("Nuevo diario creado: ". $item->horario_comida);
+  }catch (\Exception $e){
+      AppLogs::addError("Se ha producido un error al crear el próximo diario.",$e);
+  }
+  }
+
     /**
      * @return Diario
      * @throws \Exception
      */
 	public function generarProximoDiario()
   	{
-
         $diario_actual = Diario::diarioActual();
 
     	$fecha_diario = $this->proximoComida();
@@ -40,7 +55,51 @@ class DiariosService
 
         \DB::commit();
         return $diario_prox;
-  	}
+    }
+
+    public function cerrarDiario(Diario $diario){
+        $lista_faltas = $diario->detalleDiario()
+              ->where('retirado','=', 0)->get();
+
+        $limite_faltas = AppConfig::getConfig()->max_faltas;
+
+        $contador = 0;
+        $_logs = [];
+        foreach($lista_faltas as $reserva){
+
+          $becado = $reserva->becado()->first();
+          $becado->increment('total_faltas');
+
+          if ($becado->total_faltas >= $limite_faltas) {
+              $_logs[] = "El becado {$becado->id} ya tiene {$becado->total_faltas} faltas.";
+
+              $contador++;
+              $this->suspenderBecado($becado);
+          }
+        }
+        $total_faltas = count($lista_faltas);
+        AppLogs::add("Se registraron ".$total_faltas." faltas. Suspendido: ".$contador,LogTypes::INFO,[
+            'logs' => $_logs
+        ]);
+
+
+    }
+
+    private function suspenderBecado(Becado $becado){
+        $dias_castigo = AppConfig::getConfig()->castigo_duracion_dias;
+
+        $suspendido_hasta = now()
+            ->addDays($dias_castigo)
+            ->subMinutes(5);
+
+        $becado->suspendido_hasta = $suspendido_hasta;
+
+        // Al suspender un becado, reseteamos el contador de faltas
+        $becado->total_faltas = 0;
+
+        $becado->save();
+
+    }
 
   	private function proximoComida()
   	{
@@ -82,9 +141,13 @@ class DiariosService
       return $key_dia;
     }
 
+    /**
+     * Genera todas las reservas para el diario indicado, de todos los becados ACTIVOS que van a comer en ese diario.
+     * @param Diario $diario
+     */
     private function crearDetalleDiario(Diario $diario){
-      #buscamos los becados que comen en el dia actual
-      $lista_becados = Becado::whereHas('calendario', function($query) use($diario){
+      #buscamos los becados, ACTIVOS, que comen en el dia actual
+      $lista_becados = Becado::activos()->whereHas('calendario', function($query) use($diario){
           $query->where($diario->horario_comida, '>', 0); //todos los becados que tienen en su calendario en el campo raciones mayor a cero
       })->with('calendario:id,becado_id,'.$diario->horario_comida)->get();
 
