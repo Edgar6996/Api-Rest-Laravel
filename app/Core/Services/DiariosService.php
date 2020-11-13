@@ -85,6 +85,10 @@ class DiariosService
         $suspendido_hasta = now()->addDays($dias_castigo);
 
         $becado->suspendido_hasta = $suspendido_hasta;
+
+        // Al suspender un becado, reseteamos el contador de faltas
+        $becado->total_faltas = 0;
+
         $becado->save();
 
     }
