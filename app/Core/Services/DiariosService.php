@@ -19,7 +19,7 @@ class DiariosService
     try{
       $diario_actual = Diario::diarioActual();
       $this->cerrarDiario($diario_actual);
-      
+
       $item = $this->generarProximoDiario();
       AppLogs::add("Nuevo diario creado: ". $item->horario_comida);
   }catch (\Exception $e){
@@ -55,7 +55,7 @@ class DiariosService
         \DB::commit();
         return $diario_prox;
     }
-    
+
     public function cerrarDiario(Diario $diario){
         $lista_faltas = $diario->detalleDiario()
               ->where('retirado','=', 0)->get();
@@ -73,12 +73,16 @@ class DiariosService
               $this->suspenderBecado($becado);
           }
         }
-        $total_faltas = count($lista_faltas); 
+        $total_faltas = count($lista_faltas);
         AppLogs::add("Se registraron ".$total_faltas." suspendido: ".$contador);
     }
 
-    private function suspenderBecado($becado){
+    private function suspenderBecado(Becado $becado){
+        $dias_castigo = AppConfig::getConfig()->castigo_duracion_dias;
 
+        $suspendido_hasta = now()->addDays($dias_castigo);
+
+        $becado->suspendido_hasta = $suspendido_hasta;
     }
 
   	private function proximoComida()
@@ -121,9 +125,13 @@ class DiariosService
       return $key_dia;
     }
 
+    /**
+     * Genera todas las reservas para el diario indicado, de todos los becados ACTIVOS que van a comer en ese diario.
+     * @param Diario $diario
+     */
     private function crearDetalleDiario(Diario $diario){
-      #buscamos los becados que comen en el dia actual
-      $lista_becados = Becado::whereHas('calendario', function($query) use($diario){
+      #buscamos los becados, ACTIVOS, que comen en el dia actual
+      $lista_becados = Becado::activos()->whereHas('calendario', function($query) use($diario){
           $query->where($diario->horario_comida, '>', 0); //todos los becados que tienen en su calendario en el campo raciones mayor a cero
       })->with('calendario:id,becado_id,'.$diario->horario_comida)->get();
 

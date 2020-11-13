@@ -8,6 +8,7 @@ use App\Models\Calendario;
 use App\Models\DetalleDiario;
 use App\Models\Huella;
 use App\Models\Registro;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,6 +23,9 @@ use Illuminate\Database\Eloquent\Builder;
  * @property int|EstadoBecados estado
  * @property string|null foto: Link de la foto del becado
  * @property int user_id
+ * @property Carbon|null suspendido_hasta
+ *
+ * @method static Builder|Becado activos
  */
 class Becado extends Model
 {
@@ -43,9 +47,22 @@ class Becado extends Model
     # Indicamos los atributos que no se deben enviar al cliente
     protected $hidden = [ ];
 
+    # Convertimos a instancias de Carbon automaticamente los atributos indicados
+    protected $dates = [
+        'suspendido_hasta'
+    ];
+
+    // Con esto, agregamos atributos "calculados" (que no existen en la db)
+    protected $appends = ['is_suspendido'];
+
     # Nos permite indicar relaciones que se obtengan de forma automatica
     # protected $with = ['calendario'];
 
+    public function getIsSuspendidoAttribute()
+    {
+        // si suspendido hasta es mayor que la hora actual, significa que SI está suspendido.
+        return $this->suspendido_hasta && $this->suspendido_hasta->gt(now());
+    }
 
     # Getters & Setters
     public function getNombresAttribute()
@@ -95,7 +112,12 @@ class Becado extends Model
     # Scopes
     public function scopeActivos(Builder $query)
     {
-        $query->where('estado', '=', EstadoBecados::ACTIVO);
+        $query->where('estado', '=', EstadoBecados::ACTIVO)
+            ->where(function (Builder $query) {
+                $query->whereNull('suspendido_hasta')
+                    ->orWhere('suspendido_hasta', '<=', now()->toDateTimeString());
+            });
+
     }
 
 

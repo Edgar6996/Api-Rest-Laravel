@@ -27,7 +27,6 @@ class DiarioController extends Controller
 
             } catch (\Exception $e) {
                 AppLogs::addError("No fue posible crear el próximo diario.",$e);
-
                 return $res->setCode(500)->setMessage("No hay un diario actual y no fué posible crearlo.")->send();
             }
         }
@@ -118,13 +117,13 @@ class DiarioController extends Controller
     public function showReservaActualByBecadoId(Request $request, $becado_id)
     {
         $res = new ApiMessage();
- 
+
         $reserva =Becado::reservaActual($becado_id);
- 
+
         if (!$reserva) {
              return $res->setCode(404)->setMessage('El becado no cuenta con una reserva para el diario actual')->send();
         }
- 
+
         return $res->setData($reserva)->send();
     }
 
