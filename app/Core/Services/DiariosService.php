@@ -82,9 +82,15 @@ class DiariosService
     private function suspenderBecado(Becado $becado){
         $dias_castigo = AppConfig::getConfig()->castigo_duracion_dias;
 
-        $suspendido_hasta = now()->addDays($dias_castigo);
+        $suspendido_hasta = now()
+            ->addDays($dias_castigo)
+            ->subMinutes(5);
 
         $becado->suspendido_hasta = $suspendido_hasta;
+
+        // Al suspender un becado, reseteamos el contador de faltas
+        $becado->total_faltas = 0;
+
         $becado->save();
 
     }
