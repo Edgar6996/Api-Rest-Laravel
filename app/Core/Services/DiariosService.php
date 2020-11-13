@@ -83,6 +83,8 @@ class DiariosService
         $suspendido_hasta = now()->addDays($dias_castigo);
 
         $becado->suspendido_hasta = $suspendido_hasta;
+        $becado->save();
+
     }
 
   	private function proximoComida()
