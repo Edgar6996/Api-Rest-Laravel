@@ -19,7 +19,7 @@ class DiariosService
     try{
       $diario_actual = Diario::diarioActual();
       $this->cerrarDiario($diario_actual);
-      
+
       $item = $this->generarProximoDiario();
       AppLogs::add("Nuevo diario creado: ". $item->horario_comida);
   }catch (\Exception $e){
@@ -55,7 +55,7 @@ class DiariosService
         \DB::commit();
         return $diario_prox;
     }
-    
+
     public function cerrarDiario(Diario $diario){
         $lista_faltas = $diario->detalleDiario()
               ->where('retirado','=', 0)->get();
@@ -73,12 +73,16 @@ class DiariosService
               $this->suspenderBecado($becado);
           }
         }
-        $total_faltas = count($lista_faltas); 
+        $total_faltas = count($lista_faltas);
         AppLogs::add("Se registraron ".$total_faltas." suspendido: ".$contador);
     }
 
-    private function suspenderBecado($becado){
+    private function suspenderBecado(Becado $becado){
+        $dias_castigo = AppConfig::getConfig()->castigo_duracion_dias;
 
+        $suspendido_hasta = now()->addDays($dias_castigo);
+
+        $becado->suspendido_hasta = $suspendido_hasta;
     }
 
   	private function proximoComida()

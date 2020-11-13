@@ -11,8 +11,8 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int max_porciones_becado
  * @property int max_porciones_quirofano
- *
- *
+ * @property string limite_horas_cancelar_reserva
+ * @property int castigo_duracion_dias
  */
 class AppConfig extends Model
 {
@@ -43,6 +43,9 @@ class AppConfig extends Model
         'updated_at'
     ];
 
+    /**
+     * @return AppConfig|Model
+     */
     public static function getConfig()
     {
         $config = AppConfig::first();
