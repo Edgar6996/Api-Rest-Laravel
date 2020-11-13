@@ -1,10 +1,13 @@
 <?php
 
 use App\Core\Tools\ApiMessage;
+use App\Enums\CategoriasBecados;
 use App\Http\Controllers\BecadoControllers;
+use App\Models\Calendario;
 use App\Models\AppConfig;
 use App\Models\Diario;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Passport\Passport;
