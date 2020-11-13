@@ -69,6 +69,8 @@ class DiariosService
           $becado->increment('total_faltas');
 
           if ($becado->total_faltas >= $limite_faltas) {
+              AppLogs::add("El becado {$becado->id} ya tiene {$becado->total_faltas} faltas.");
+
               $contador++;
               $this->suspenderBecado($becado);
           }
