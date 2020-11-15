@@ -14,7 +14,7 @@ class AddRacionesSinRetirarToDiarios extends Migration
     public function up()
     {
         Schema::table('diarios', function (Blueprint $table) {
-            $table->integer('raciones_sin_retirar');
+            $table->integer('raciones_sin_retirar')->default(0);
         });
     }
 
