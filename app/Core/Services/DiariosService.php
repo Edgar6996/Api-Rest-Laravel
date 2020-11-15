@@ -45,10 +45,11 @@ class DiariosService
         \DB::beginTransaction();
 
     	$diario_prox = Diario::create([
-        'fecha' => $fecha_diario,
-        'horario_comida' => $this->keyDia(),
-        'total_raciones' => 0,
-        'menu_comida' => "",
+            'fecha' => $fecha_diario,
+            'horario_comida' => $this->keyDia(),
+            'total_raciones' => 0,
+            'menu_comida' => "",
+            'raciones_sin_retirar' => 0,
     	]);
 
         $this->crearDetalleDiario($diario_prox);
@@ -82,6 +83,7 @@ class DiariosService
             'logs' => $_logs
         ]);
 
+        $diario->racionesSinRetirar();
 
     }
 
