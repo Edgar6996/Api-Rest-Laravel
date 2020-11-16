@@ -79,6 +79,16 @@ class Diario extends Model
         $this->save();
     }
 
+    public function racionesSinRetirar(){
+        $no_retirado = $this->detalleDiario()
+            ->where('retirado',0)
+            ->sum('raciones');
+
+        $this->raciones_sin_retirar = $no_retirado;
+
+        $this->save();
+    }
+
     /**
      * @return Carbon
      */
