@@ -33,9 +33,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->call(function () {
         $service = new DiariosService();
-        $service->procesarDiarios();    
+        $service->procesarDiarios();
 
-        })->twiceDaily(3,14);
+        })->twiceDaily(14, 22);
     }
 
     /**
