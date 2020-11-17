@@ -62,8 +62,6 @@ class DiariosService
         $lista_faltas = $diario->detalleDiario()
               ->where('retirado','=', 0)->get();
 
-        $limite_faltas = AppConfig::getConfig()->max_faltas;
-
         $contador = 0;
         $_logs = [];
         foreach($lista_faltas as $reserva){
@@ -71,12 +69,6 @@ class DiariosService
           $becado = $reserva->becado()->first();
           $becado->increment('total_faltas');
 
-          if ($becado->total_faltas >= $limite_faltas) {
-              $_logs[] = "El becado {$becado->id} ya tiene {$becado->total_faltas} faltas.";
-
-              $contador++;
-              $this->suspenderBecado($becado);
-          }
         }
         $total_faltas = count($lista_faltas);
         AppLogs::add("Se registraron ".$total_faltas." faltas. Suspendido: ".$contador,LogTypes::INFO,[
@@ -155,11 +147,36 @@ class DiariosService
 
       $key_dia = $diario->horario_comida;
 
+
+      $logs = [];
       foreach ($lista_becados as $becado) {
-        $diario->detalleDiario()->create([
-            'becado_id' => $becado->id,
-            'raciones' => $becado->calendario->$key_dia
-        ]);
+          # verificamos si becado tiene faltas
+          if ($becado->total_faltas > 0) {
+              // tiene faltas, no puede comer
+              // le descontamos la falta
+              $becado->decrement('total_faltas');
+              $becado->suspendido_hasta = $diario->fecha
+                  ->clone()->addHours(2);
+
+              $logs[] = "Becado #{$becado->id} suspendido hasta ". $becado->suspendido_hasta->toDateTimeString();
+              $becado->save();
+
+          }else{
+              $diario->detalleDiario()->create([
+                  'becado_id' => $becado->id,
+                  'raciones' => $becado->calendario->$key_dia
+              ]);
+          }
       }
+
+
+        $count = count($logs);
+        if($count > 0){
+          AppLogs::add("{$count} becados han sido penalizados por tener faltas", LogTypes::INFO,[
+              'logs' => $logs
+          ]);
+      }
+
+
     }
 }
