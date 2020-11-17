@@ -112,11 +112,12 @@ class Becado extends Model
     # Scopes
     public function scopeActivos(Builder $query)
     {
-        $query->where('estado', '=', EstadoBecados::ACTIVO)
-            ->where(function (Builder $query) {
-                $query->whereNull('suspendido_hasta')
-                    ->orWhere('suspendido_hasta', '<=', now()->toDateTimeString());
-            });
+        $query->where('estado', '=', EstadoBecados::ACTIVO);
+
+//            ->where(function (Builder $query) {
+//                $query->whereNull('suspendido_hasta')
+//                    ->orWhere('suspendido_hasta', '<=', now()->toDateTimeString());
+//            });
 
     }
 

@@ -40,8 +40,10 @@ Route::middleware('auth:api')->group(function () {
 
 
 Route::get('prueba', function () {
-       
+
     $service = new DiariosService();
-    $service->procesarDiarios(); 
-    
+    $service->procesarDiarios();
+
+
+
 });
