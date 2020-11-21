@@ -14,5 +14,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    $pfix = \App::isLocal() ? " (testing)":"";
+    return response()->json([
+        'app' => 'Comedor UNCAus Server' . $pfix,
+        'version' => '1.0',
+    ]);
 });
