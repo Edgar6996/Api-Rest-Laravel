@@ -79,6 +79,28 @@ class DiariosService
 
     }
 
+    public function resetDiarioActual($resetFaltas = true)
+    {
+        $diario = Diario::diarioActual();
+        try{
+            // eliminamos el detalle
+            $diario->detalleDiario()->delete();
+
+            $this->crearDetalleDiario($diario, $resetFaltas);
+
+            $diario->actualizarTotalRaciones();
+
+            AppLogs::add("Se ha reseteado el diario #{$diario->id}", LogTypes::INFO);
+            return true;
+        }catch (\Throwable $e){
+            AppLogs::add("Falló al resetear el diario #{$diario->id}", LogTypes::ERROR,[
+                'error' => $e->getMessage(),
+                'line' => $e->getFile() . ':' . $e->getLine()
+            ]);
+        }
+        return false;
+    }
+
     private function suspenderBecado(Becado $becado){
         $dias_castigo = AppConfig::getConfig()->castigo_duracion_dias;
 
@@ -139,7 +161,7 @@ class DiariosService
      * Genera todas las reservas para el diario indicado, de todos los becados ACTIVOS que van a comer en ese diario.
      * @param Diario $diario
      */
-    private function crearDetalleDiario(Diario $diario){
+    private function crearDetalleDiario(Diario $diario, $resetFaltas = false){
       #buscamos los becados, ACTIVOS, que comen en el dia actual
       $lista_becados = Becado::activos()->whereHas('calendario', function($query) use($diario){
           $query->where($diario->horario_comida, '>', 0); //todos los becados que tienen en su calendario en el campo raciones mayor a cero
@@ -149,9 +171,12 @@ class DiariosService
 
 
       $logs = [];
+      if(!$lista_becados){
+          $logs[] = "No se obtuvieron becados para esta comida";
+      }
       foreach ($lista_becados as $becado) {
           # verificamos si becado tiene faltas
-          if ($becado->total_faltas > 0) {
+          if (!$resetFaltas && $becado->total_faltas > 0) {
               // tiene faltas, no puede comer
               // le descontamos la falta
               $becado->decrement('total_faltas');
@@ -162,6 +187,14 @@ class DiariosService
               $becado->save();
 
           }else{
+              if($resetFaltas && $becado->total_faltas > 0){
+                  $becado->total_faltas = 0;
+                  $becado->suspendido_hasta = null;
+
+                  $logs[] = "Se han borrado las faltas del becado #{$becado->id}";
+                  $becado->save();
+              }
+
               $diario->detalleDiario()->create([
                   'becado_id' => $becado->id,
                   'raciones' => $becado->calendario->$key_dia

@@ -11,6 +11,7 @@ Route:: middleware('user.admin')->prefix('admin')->group(function () {
 
     Route::post('nuevo-token-lector', [LectorController::class, 'crearNuevoToken']);
     Route::post('crear-diario', [DiarioController::class, 'crearProximoDiario']);
+    Route::post('reset-diario', [DiarioController::class, 'resetDiarioActual']);
 
     Route::get('users',[UsersController::class, "index"]);
     Route::post("users/nuevo",[UsersController::class, "registrarUsuario"]);
