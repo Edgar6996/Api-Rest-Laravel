@@ -74,6 +74,23 @@ class DiarioController extends Controller
 		}
     }
 
+    public function resetDiarioActual()
+    {
+        $res = new ApiMessage();
+
+        $service = new DiariosService();
+        $ok = $service->resetDiarioActual();
+        if(!$ok){
+            return $res->setCode(409)->setMessage("No fué posible resetear el diario actual")->send();
+        }
+
+        $res->setMessage("Diario reseteado");
+        $diario = Diario::diarioActual();
+        $res->setData($diario);
+
+        return $res->send();
+    }
+
     /**
      * Cancela una reserva DEL DIARIO ACTUAL
      */
