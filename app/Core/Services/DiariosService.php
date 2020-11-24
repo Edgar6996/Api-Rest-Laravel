@@ -171,6 +171,7 @@ class DiariosService
 
 
       $logs = [];
+      $suspendidos = 0;
       if(!$lista_becados){
           $logs[] = "No se obtuvieron becados para esta comida";
       }
@@ -185,9 +186,10 @@ class DiariosService
 
               $logs[] = "Becado #{$becado->id} suspendido hasta ". $becado->suspendido_hasta->toDateTimeString();
               $becado->save();
+              $suspendidos++;
 
           }else{
-              if($resetFaltas && $becado->total_faltas > 0){
+              if($resetFaltas && ($becado->total_faltas > 0 || $becado->suspendido_hasta)){
                   $becado->total_faltas = 0;
                   $becado->suspendido_hasta = null;
 
@@ -205,7 +207,7 @@ class DiariosService
 
         $count = count($logs);
         if($count > 0){
-          AppLogs::add("{$count} becados han sido penalizados por tener faltas", LogTypes::INFO,[
+          AppLogs::add("{$suspendidos} becados han sido penalizados por tener faltas", LogTypes::INFO,[
               'logs' => $logs
           ]);
       }
