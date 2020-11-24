@@ -42,8 +42,8 @@ class Diario extends Model
     }
 
     #Relaciones
-    public function registro(){
-        return $this->belongsTo(Registro::class, 'registro_id');
+    public function registros(){
+        return $this->hasMany(Registro::class, 'diario_id');
     }
 
     public function detalleDiario(){
@@ -79,12 +79,22 @@ class Diario extends Model
         $this->save();
     }
 
-    public function racionesSinRetirar(){
-        $no_retirado = $this->detalleDiario()
-            ->where('retirado',0)
-            ->sum('raciones');
+    /**
+     * Calcula y guarda el total de raciones sin retirar.
+     * Si se indica el flag $sin_registros, indica que el diario no tuvo registros, por lo que se maracara
+     * el total de raciones sin retirar como 0.
+     * @param bool $sin_registros
+     */
+    public function actualizarRacionesSinRetirar($sin_registros = false){
+        if($sin_registros){
+            $this->raciones_sin_retirar = 0; // el diario no se empleó
+        }else{
+            $no_retirado = $this->detalleDiario()
+                ->where('retirado',0)
+                ->sum('raciones');
 
-        $this->raciones_sin_retirar = $no_retirado;
+            $this->raciones_sin_retirar = $no_retirado;
+        }
 
         $this->save();
     }

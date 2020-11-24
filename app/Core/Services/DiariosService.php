@@ -59,7 +59,19 @@ class DiariosService
     }
 
     public function cerrarDiario(Diario $diario){
-        $lista_faltas = $diario->detalleDiario()
+        # Verificamos si se registraron accesos por huella
+        $total_registros = $diario->registros()->count();
+        if($total_registros == 0){
+            // nadie retiró, consideramos como que el Comedor no trabajo para este diario
+            $diario->actualizarRacionesSinRetirar(true);
+
+            AppLogs::add("Diario #{$diario->id} cerrado." ,LogTypes::INFO,[
+                'info' => "No se detectaron registros para este diario."
+            ]);
+            return;
+        }
+
+	    $lista_faltas = $diario->detalleDiario()
               ->where('retirado','=', 0)->get();
 
         $contador = 0;
@@ -68,14 +80,14 @@ class DiariosService
 
           $becado = $reserva->becado()->first();
           $becado->increment('total_faltas');
-
         }
         $total_faltas = count($lista_faltas);
-        AppLogs::add("Se registraron ".$total_faltas." faltas. Suspendido: ".$contador,LogTypes::INFO,[
+        AppLogs::add("Diario #{$diario->id} cerrado." ,LogTypes::INFO,[
+            'info' => "Se registraron ".$total_faltas." faltas.",
             'logs' => $_logs
         ]);
 
-        $diario->racionesSinRetirar();
+        $diario->actualizarRacionesSinRetirar();
 
     }
 
