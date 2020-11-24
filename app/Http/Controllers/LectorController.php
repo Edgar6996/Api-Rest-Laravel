@@ -40,17 +40,14 @@ class LectorController extends Controller
         return $res->send();
     }
 
-
-
     public function nuevoRegistroHuella(Request $request, $becado_id)
     {
         $res = new ApiMessage($request);
 
-        // TODO:
         // 1. Buscar en el Diario Actual, el DetalleDiario correspondiente al becado_id.
         $diario_actual = Diario::diarioActual();
 
-       $detalle = $diario_actual->detalleDiario()->where('becado_id',$becado_id)->first();
+        $detalle = $diario_actual->detalleDiario()->where('becado_id',$becado_id)->first();
         //  -> Si no existe, significa que el becado no tiene reserva para el Diario actual, devolvemos un error
        if(!$detalle){
             return $res->setMessage("No comes hoy ")
