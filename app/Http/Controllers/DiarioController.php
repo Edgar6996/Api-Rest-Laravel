@@ -67,8 +67,10 @@ class DiarioController extends Controller
 
 	public function crearProximoDiario() {
 		try {
-             $diario = new DiariosService();
-             return $diario->generarProximoDiario();
+             $service = new DiariosService();
+             $service->procesarDiarios();
+
+             return Diario::diarioActual();
         } catch (\Exception $e){
             return $e->getMessage();
 		}
