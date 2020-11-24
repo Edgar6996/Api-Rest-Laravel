@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string horario_comida
  * @property int total_raciones
  * @property Carbon fecha
+ * @property bool aplicar_faltas
  */
 class Diario extends Model
 {
@@ -33,7 +34,8 @@ class Diario extends Model
     ];
 
     protected $casts = [
-        'total_raciones' => 'integer'
+        'total_raciones' => 'integer',
+        'aplicar_faltas' => 'boolean'
     ];
 
     public function getHorarioLimiteAttribute()

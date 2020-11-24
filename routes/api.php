@@ -41,6 +41,10 @@ Route::middleware('auth:api')->group(function () {
 
 Route::get('prueba', function () {
 
+    if (\App::isProduction()) {
+        abort(404);
+    }
+
     $service = new DiariosService();
     $service->procesarDiarios();
 

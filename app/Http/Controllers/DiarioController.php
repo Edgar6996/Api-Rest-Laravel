@@ -67,8 +67,10 @@ class DiarioController extends Controller
 
 	public function crearProximoDiario() {
 		try {
-             $diario = new DiariosService();
-             return $diario->generarProximoDiario();
+             $service = new DiariosService();
+             $service->procesarDiarios();
+
+             return Diario::diarioActual();
         } catch (\Exception $e){
             return $e->getMessage();
 		}
@@ -142,6 +144,35 @@ class DiarioController extends Controller
         }
 
         return $res->setData($reserva)->send();
+    }
+
+    public function changeAplicarFaltasToDiarioActual(Request $request )
+    {
+        $res = new ApiMessage($request);
+        $data = $request->validate([
+            'value' => 'required|boolean'
+        ]);
+
+        $new_val = boolval($data['value']);
+        $diario_actual = Diario::diarioActual();
+        if ($diario_actual->aplicar_faltas != $new_val) {
+            $diario_actual->aplicar_faltas = $new_val;
+            try {
+                $diario_actual->saveOrFail();
+                $res->setMessage("El diario ha sido actualizado");
+            } catch (\Throwable $e) {
+                AppLogs::addError("Se ha producido un error al actualizar el campo aplicar_faltas del diario actual.",$e,[
+                    'diario_actual' => $diario_actual->id
+                ]);
+                return $res->setCode(409)->setMessage("No fué posible actualizar el diario actual.")->send();
+            }
+        }
+
+        $res->setData([
+            'new_val' => $diario_actual->aplicar_faltas
+        ]);
+
+        return $res->send();
     }
 
 }
