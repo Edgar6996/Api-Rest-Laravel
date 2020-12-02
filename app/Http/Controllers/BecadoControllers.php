@@ -33,12 +33,17 @@ class BecadoControllers extends Controller
     public function index(Request $request)
     {
         $res = new ApiMessage();
+        $dni = $request->get('search');
+        if($dni){
+            $buscar = Becado::where('dni','=',intval($dni))->get();
+            $res->setData($buscar);
+            return $res->send();
+        }
+
 
         # Pensar en agregar opcion de filtro
         $perPage = $request->get('per_page',10) ; // items por pagina
-
         $consulta = Becado::query();
-
 
         $lista = $consulta->paginate($perPage);
 
