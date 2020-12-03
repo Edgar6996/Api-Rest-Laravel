@@ -81,7 +81,16 @@ class DiariosService
         foreach($lista_faltas as $reserva){
 
           $becado = $reserva->becado()->first();
-          $becado->increment('total_faltas');
+          if($becado){
+              $becado->increment('total_faltas');
+          }else{
+              AppLogs::add("Error al cerrar diario", LogTypes::ERROR,[
+                  'error' => "No existe el becado de la reserva.",
+                  'reserva' => $reserva->id,
+                  'diario' => $diario->id
+              ]);
+          }
+
         }
 
         $total_faltas = count($lista_faltas);
