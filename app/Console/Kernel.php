@@ -30,10 +30,16 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
 
+        $schedule->call(function () {
+            // esta funcion se ejecuta a cada hora
+            $service = new DiariosService();
+            $service->checkDiarioActual();
+
+        })->hourly();
 
         $schedule->call(function () {
-        $service = new DiariosService();
-        $service->procesarDiarios();
+            $service = new DiariosService();
+            $service->procesarDiarios();
 
         })->twiceDaily(14, 22);
     }
