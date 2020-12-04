@@ -33,13 +33,21 @@ class BecadoControllers extends Controller
     public function index(Request $request)
     {
         $res = new ApiMessage();
-        $dni = $request->get('search');
-        if($dni){
-            $buscar = Becado::where('dni','=',intval($dni))->get();
-            $res->setData($buscar);
-            return $res->send();
-        }
+        if(!empty($request->search)) {
+            $searchFields = ['dni', 'nombres', 'apellidos', 'email', 'telefono', 'autorizado_por'];
+            $consulta = Becado::query();
+            $consulta->where(function ($query) use ($request, $searchFields) {
+                $searchWildcard = '%' . $request->search . '%';
+                foreach ($searchFields as $field) {
+                    $query->orWhere($field, 'LIKE', $searchWildcard);
+                }
+            });
 
+            $lista = $consulta->paginate();
+
+            $res->setData($lista);
+            return  $res->send();
+        }
 
         # Pensar en agregar opcion de filtro
         $perPage = $request->get('per_page',10) ; // items por pagina
