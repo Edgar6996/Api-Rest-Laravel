@@ -33,8 +33,11 @@ class BecadoControllers extends Controller
     public function index(Request $request)
     {
         $res = new ApiMessage();
+        # Pensar en agregar opcion de filtro
+        $perPage = $request->get('per_page',10) ; // items por pagina
+
         if(!empty($request->search)) {
-            $searchFields = ['dni', 'nombres', 'apellidos', 'email', 'telefono', 'autorizado_por'];
+            $searchFields = ['dni', 'nombres', 'apellidos', 'autorizado_por'];
             $consulta = Becado::query();
             $consulta->where(function ($query) use ($request, $searchFields) {
                 $searchWildcard = '%' . $request->search . '%';
@@ -43,14 +46,13 @@ class BecadoControllers extends Controller
                 }
             });
 
-            $lista = $consulta->paginate();
+            $lista = $consulta->paginate($perPage);
 
             $res->setData($lista);
             return  $res->send();
         }
 
-        # Pensar en agregar opcion de filtro
-        $perPage = $request->get('per_page',10) ; // items por pagina
+
         $consulta = Becado::query();
 
         $lista = $consulta->paginate($perPage);
@@ -87,6 +89,22 @@ class BecadoControllers extends Controller
         $idDiarioActual = Diario::diarioActual()->id;
 
         $perPage = $request->get('per_page',5) ; // items por pagina
+
+        if(!empty($request->search)) {
+            $searchFields = ['dni', 'nombres', 'apellidos', 'autorizado_por'];
+            $consulta = Becado::query();
+            $consulta->where(function ($query) use ($request, $searchFields) {
+                $searchWildcard = '%' . $request->search . '%';
+                foreach ($searchFields as $field) {
+                    $query->orWhere($field, 'LIKE', $searchWildcard);
+                }
+            });
+
+            $lista = $consulta->paginate($perPage);
+
+            $res->setData($lista);
+            return  $res->send();
+        }
 
         $becadosConRaciones = Becado::whereHas('ultimoDetalleDiario', function (Builder $query) use($idDiarioActual) {
             $query->where('diario_id', $idDiarioActual);
