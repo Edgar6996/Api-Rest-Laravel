@@ -90,25 +90,24 @@ class BecadoControllers extends Controller
 
         $perPage = $request->get('per_page',5) ; // items por pagina
 
+        $becadosConRaciones = Becado::whereHas('ultimoDetalleDiario', function (Builder $query) use($idDiarioActual) {
+            $query->where('diario_id', $idDiarioActual);
+        })->with('ultimoDetalleDiario');
+
         if(!empty($request->search)) {
             $searchFields = ['dni', 'nombres', 'apellidos', 'autorizado_por'];
-            $consulta = Becado::query();
-            $consulta->where(function ($query) use ($request, $searchFields) {
+            $becadosConRaciones->where(function ($query) use ($request, $searchFields) {
                 $searchWildcard = '%' . $request->search . '%';
                 foreach ($searchFields as $field) {
                     $query->orWhere($field, 'LIKE', $searchWildcard);
                 }
             });
 
-            $lista = $consulta->paginate($perPage);
+            $lista = $becadosConRaciones->paginate($perPage);
 
             $res->setData($lista);
             return  $res->send();
         }
-
-        $becadosConRaciones = Becado::whereHas('ultimoDetalleDiario', function (Builder $query) use($idDiarioActual) {
-            $query->where('diario_id', $idDiarioActual);
-        })->with('ultimoDetalleDiario');
 
         $lista = $becadosConRaciones->paginate($perPage);
 
