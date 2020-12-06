@@ -18,7 +18,7 @@ Route:: middleware('user.admin')->prefix('admin')->group(function () {
 
     Route::get('logs', [AdminController::class,'indexAppLogs']);
 
-
+    Route::post('nuevo-registro/{becado_id}',[LectorController::class,"nuevoRegistroHuella"]);
 
 
     Route::get('check-becados', function () {

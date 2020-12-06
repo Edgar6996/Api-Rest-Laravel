@@ -33,12 +33,27 @@ class BecadoControllers extends Controller
     public function index(Request $request)
     {
         $res = new ApiMessage();
-
         # Pensar en agregar opcion de filtro
         $perPage = $request->get('per_page',10) ; // items por pagina
 
-        $consulta = Becado::query();
+        if(!empty($request->search)) {
+            $searchFields = ['dni', 'nombres', 'apellidos', 'email','telefono', 'autorizado_por'];
+            $consulta = Becado::query();
+            $consulta->where(function ($query) use ($request, $searchFields) {
+                $searchWildcard = '%' . $request->search . '%';
+                foreach ($searchFields as $field) {
+                    $query->orWhere($field, 'LIKE', $searchWildcard);
+                }
+            });
 
+            $lista = $consulta->paginate($perPage);
+
+            $res->setData($lista);
+            return  $res->send();
+        }
+
+
+        $consulta = Becado::query();
 
         $lista = $consulta->paginate($perPage);
 
@@ -78,6 +93,21 @@ class BecadoControllers extends Controller
         $becadosConRaciones = Becado::whereHas('ultimoDetalleDiario', function (Builder $query) use($idDiarioActual) {
             $query->where('diario_id', $idDiarioActual);
         })->with('ultimoDetalleDiario');
+
+        if(!empty($request->search)) {
+            $searchFields = ['dni', 'nombres', 'apellidos', 'email', 'autorizado_por'];
+            $becadosConRaciones->where(function ($query) use ($request, $searchFields) {
+                $searchWildcard = '%' . $request->search . '%';
+                foreach ($searchFields as $field) {
+                    $query->orWhere($field, 'LIKE', $searchWildcard);
+                }
+            });
+
+            $lista = $becadosConRaciones->paginate($perPage);
+
+            $res->setData($lista);
+            return  $res->send();
+        }
 
         $lista = $becadosConRaciones->paginate($perPage);
 
