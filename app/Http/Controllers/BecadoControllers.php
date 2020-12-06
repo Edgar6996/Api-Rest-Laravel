@@ -37,7 +37,7 @@ class BecadoControllers extends Controller
         $perPage = $request->get('per_page',10) ; // items por pagina
 
         if(!empty($request->search)) {
-            $searchFields = ['dni', 'nombres', 'apellidos', 'email', 'autorizado_por'];
+            $searchFields = ['dni', 'nombres', 'apellidos', 'email','telefono', 'autorizado_por'];
             $consulta = Becado::query();
             $consulta->where(function ($query) use ($request, $searchFields) {
                 $searchWildcard = '%' . $request->search . '%';
