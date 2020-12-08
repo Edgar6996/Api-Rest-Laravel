@@ -35,10 +35,10 @@ class BecadoControllers extends Controller
         $res = new ApiMessage();
         # Pensar en agregar opcion de filtro
         $perPage = $request->get('per_page',10) ; // items por pagina
+        $consulta = Becado::query();
 
         if(!empty($request->search)) {
             $searchFields = ['dni', 'nombres', 'apellidos', 'email','telefono', 'autorizado_por'];
-            $consulta = Becado::query();
             $consulta->where(function ($query) use ($request, $searchFields) {
                 $searchWildcard = '%' . $request->search . '%';
                 foreach ($searchFields as $field) {
@@ -51,9 +51,6 @@ class BecadoControllers extends Controller
             $res->setData($lista);
             return  $res->send();
         }
-
-
-        $consulta = Becado::query();
 
         $lista = $consulta->paginate($perPage);
 
