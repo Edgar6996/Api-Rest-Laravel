@@ -35,8 +35,8 @@ class Kernel extends ConsoleKernel
         $cierre_cena = Carbon::parse(AppConfig::getConfig()->hs_cierre_cena);
 
         $schedule->call(function () {
-        $service = new DiariosService();
-        $service->procesarDiarios();
+            $service = new DiariosService();
+            $service->procesarDiarios();
 
         })->twiceDaily($cierre_almuerzo->hour, $cierre_cena->hour);
     }

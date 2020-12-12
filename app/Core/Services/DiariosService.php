@@ -16,7 +16,8 @@ use Carbon\Carbon;
 
 class DiariosService
 {
-  public function procesarDiarios(){
+
+    public function procesarDiarios(){
     try{
       $diario_actual = Diario::diarioActual();
       $this->cerrarDiario($diario_actual);
@@ -58,6 +59,25 @@ class DiariosService
         return $diario_prox;
     }
 
+    /**
+     * Esta función se ocupa de verificar que el diario actual se haya creado y este en orden
+     */
+    public function checkDiarioActual()
+    {
+        # siempre habrá un "diario actual",
+        # pero debemos revisar que no sea viejo
+        $diarioActual = Diario::diarioActual();
+
+        $now = now();
+        # Si la fecha actual es mayor que la fecha del diario y lo supera en más de tres horas,
+        # entonces el diario ya es viejo, se debe crear uno nuevo
+        if($now->gt($diarioActual->fecha) && $now->diffInHours($diarioActual->fecha) > 3){
+            AppLogs::add("Se detectó un diario viejo. Creando el nuevo diario...", LogTypes::INFO);
+            $this->procesarDiarios();
+        }
+
+    }
+
     public function cerrarDiario(Diario $diario){
         # Verificamos si se registraron accesos por huella
         $total_registros = $diario->registros()->count();
@@ -81,7 +101,16 @@ class DiariosService
         foreach($lista_faltas as $reserva){
 
           $becado = $reserva->becado()->first();
-          $becado->increment('total_faltas');
+          if($becado){
+              $becado->increment('total_faltas');
+          }else{
+              AppLogs::add("Error al cerrar diario", LogTypes::ERROR,[
+                  'error' => "No existe el becado de la reserva.",
+                  'reserva' => $reserva->id,
+                  'diario' => $diario->id
+              ]);
+          }
+
         }
 
         $total_faltas = count($lista_faltas);
@@ -115,6 +144,8 @@ class DiariosService
         }
         return false;
     }
+
+
 
     private function suspenderBecado(Becado $becado){
         $dias_castigo = AppConfig::getConfig()->castigo_duracion_dias;
