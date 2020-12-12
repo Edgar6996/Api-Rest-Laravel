@@ -29,7 +29,10 @@ class AppConfig extends Model
 
         'limite_horas_cancelar_reserva' => "02:00:00",
         'hora_cena'=> "20:00:00",
-        'hora_almuerzo' => "12:00:00"
+        'hora_almuerzo' => "12:00:00",
+
+        'hs_cierre_almuerzo' => "14:00:00",
+        'hs_cierre_cena'=> "22:00:00",
     ];
 
     // indicamos las columnas que no se deberian modificar desde un create()

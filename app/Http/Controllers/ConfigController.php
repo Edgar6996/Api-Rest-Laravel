@@ -26,34 +26,37 @@ class ConfigController extends Controller
         $validateData = $request->validate([
             'max_porciones_becado' => 'numeric',
             'max_porciones_quirofano' => 'numeric',
-    
+
             'max_faltas' => 'numeric',
             'castigo_duracion_dias' => 'numeric',
-    
+
             'limite_horas_cancelar_reserva' => 'date_format:"H:i:s"',
             'hora_cena'=> 'date_format:"H:i:s"',
-            'hora_almuerzo' => 'date_format:"H:i:s"'
+            'hora_almuerzo' => 'date_format:"H:i:s"',
+
+            'hs_cierre_almuerzo' => 'date_format:"H:i:s"',
+            'hs_cierre_cena'=> 'date_format:"H:i:s"',
         ]);
-        
+
         $max_porciones_becados_anterior = $config->max_porciones_becado;
         $max_porciones_quirofano_anterior = $config->max_porciones_quirofano;
 
         $config->update($validateData);
 
-        if ($validateData['max_porciones_becado']<$max_porciones_becados_anterior) 
-        {   
+        if ($validateData['max_porciones_becado']<$max_porciones_becados_anterior)
+        {
             $categoria = CategoriasBecados::BECADO;
             intval($categoria);
             Calendario::actualizarLimiteDeRaciones($categoria,$config->max_porciones_becado);
         }
 
-        if ($validateData['max_porciones_quirofano']<$max_porciones_quirofano_anterior) 
+        if ($validateData['max_porciones_quirofano']<$max_porciones_quirofano_anterior)
         {
             $categoria = CategoriasBecados::QUIROFANO;
             intval($categoria);
             Calendario::actualizarLimiteDeRaciones($categoria,$config->max_porciones_quirofano);
         }
-        
+
 
         return $res->setData($config)->send();
     }

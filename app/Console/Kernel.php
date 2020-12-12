@@ -3,9 +3,11 @@
 namespace App\Console;
 
 use App\Core\Services\DiariosService;
-use App\Enums\LogTypes;
-use App\Models\AppLogs;
-use App\Models\Diario;
+//use App\Enums\LogTypes;
+use App\Models\AppConfig;
+//use App\Models\AppLogs;
+//use App\Models\Diario;
+use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -29,13 +31,14 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
-
+        $cierre_almuerzo = Carbon::parse(AppConfig::getConfig()->hs_cierre_almuerzo);
+        $cierre_cena = Carbon::parse(AppConfig::getConfig()->hs_cierre_cena);
 
         $schedule->call(function () {
         $service = new DiariosService();
         $service->procesarDiarios();
 
-        })->twiceDaily(14, 22);
+        })->twiceDaily($cierre_almuerzo->hour, $cierre_cena->hour);
     }
 
     /**
