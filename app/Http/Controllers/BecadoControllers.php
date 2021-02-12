@@ -412,7 +412,7 @@ class BecadoControllers extends Controller
         # Verificamos los permisos
         $user = Auth::user();
         # Si no es el Lector o un admin user, prohibimos
-        if(!in_array($user->rol,[TiposUsuarios::ADMINISTRADOR, TiposUsuarios::LECTOR_HUELLA])){
+        if(!in_array($user->rol,[TiposUsuarios::ADMINISTRADOR, TiposUsuarios::ROOT ,TiposUsuarios::LECTOR_HUELLA])){
             return $res->setCode(403)
                 ->setMessage("Acceso denegado")->send();
         }
