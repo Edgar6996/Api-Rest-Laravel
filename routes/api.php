@@ -38,7 +38,6 @@ Route::middleware('auth:api')->group(function () {
 ### RUTAS TEMPORALES/DE PRUEBA ###
 
 
-
 Route::get('prueba', function () {
 
     if (\App::isProduction()) {
