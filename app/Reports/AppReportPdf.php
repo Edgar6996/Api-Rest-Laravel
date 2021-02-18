@@ -24,7 +24,7 @@ abstract class AppReportPdf
 
     public function __construct()
     {
-        $this->APP_URL = config('app.url');
+        $this->APP_URL = " https://comedor.uncaus.edu.ar";
 
         $this->APP_LOGO_1 = public_path("assets/logo-uncaus.png");
         #$this->APP_LOGO_1 = url("/assets/images/logo.png");
