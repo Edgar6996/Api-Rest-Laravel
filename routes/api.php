@@ -21,6 +21,11 @@ require_once "api-routes/lector.routes.php"; // Rutas exclusivas para el sistema
 
 Route::middleware('auth:api')->get('/user', [BecadoControllers::class, 'usuarioActual']);
 
+# Public routes
+Route::get('/becados/report',[ BecadoControllers::class, 'exportListadoPDF']) // Generar un PDF con el listado
+->name('report.becados');
+
+# Private routes
 Route::middleware('auth:api')->group(function () {
     // definir o importar rutas que deben usar autenticacion
     require_once "api-routes/becados.routes.php"; // Rutas becado requeridas
@@ -36,7 +41,6 @@ Route::middleware('auth:api')->group(function () {
 
 
 ### RUTAS TEMPORALES/DE PRUEBA ###
-
 
 
 Route::get('prueba', function () {

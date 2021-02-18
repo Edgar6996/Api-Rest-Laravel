@@ -10,6 +10,7 @@
     "require": {
         "php": "^7.3",
         "ext-json": "*",
+        "barryvdh/laravel-dompdf": "^0.9.0",
         "bensampo/laravel-enum": "^3.0",
         "doctrine/dbal": "^2.11",
         "fideloper/proxy": "^4.2",
