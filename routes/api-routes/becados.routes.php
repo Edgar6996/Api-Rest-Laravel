@@ -9,10 +9,12 @@ Route::get('/becados-reserva', [BecadoControllers::class, 'becadosConReserva'])-
 Route::put('/becados/{becado}', [BecadoControllers::class, 'update']);      // Actualizar
 Route::get('/becados/{becado}', [BecadoControllers::class, 'show']);        // Listar becado individual
 
+Route::get('/becados/report',[ BecadoControllers::class, 'exportListadoPDF'])->middleware('user.admin'); // Generar un PDF con el listado
+
 # Route::delete('/becados/{becado}', [BecadoControllers::class, 'destroy']);  // ELiminar becado
 
 // quitamos el middleware de esta ruta y lo  manejamos en el controller
-Route::delete('/becados/{becado}',[BecadoControllers::class, 'deshabilitarBecado']); 
+Route::delete('/becados/{becado}',[BecadoControllers::class, 'deshabilitarBecado']);
 
 
 // los Uploads los definimos con POST siempre.

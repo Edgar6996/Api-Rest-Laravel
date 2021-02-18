@@ -14,6 +14,7 @@ use App\Models\Becado;
 use App\Models\Calendario;
 use App\Models\Diario;
 use App\Models\User;
+use App\Reports\BecadosReport;
 use Auth;
 use Hash;
 use Illuminate\Database\Eloquent\Builder;
@@ -417,7 +418,7 @@ class BecadoControllers extends Controller
                 ->setMessage("Acceso denegado")->send();
         }
 
-        # obtengo el becacdo
+        # obtengo el becado
         $becado = Becado::find($id);
 
         if(!$becado){
@@ -500,6 +501,15 @@ class BecadoControllers extends Controller
             ]);
             return $res->setCode(409)->setMessage("No fue posible actualizar el becado.")->send();
         }
+
+    }
+
+
+    public function exportListadoPDF(Request $request )
+    {
+
+        $dpf = new BecadosReport();
+        $dpf->download("Lista Becados - Comedor UNCAus - " . now()->format('dd/mm/yy'));
 
     }
 }
