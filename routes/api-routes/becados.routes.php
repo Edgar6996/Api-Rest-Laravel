@@ -7,8 +7,7 @@ Route::get('/becados', [BecadoControllers::class, 'index'])->middleware('user.ad
 Route::get('/becados-completo', [BecadoControllers::class, 'becadosCompleto'])->middleware('user.lector'); // Listar
 Route::get('/becados-reserva', [BecadoControllers::class, 'becadosConReserva'])->middleware('user.admin'); // Listar
 
-Route::get('/becados/report',[ BecadoControllers::class, 'exportListadoPDF']) // Generar un PDF con el listado
-->name('report.becados');
+
 Route::get('/becados/report-link', function () {
     $link =  URL::temporarySignedRoute('report.becados', now()->addHours(1));
     $res = new \App\Core\Tools\ApiMessage();
