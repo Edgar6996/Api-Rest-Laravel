@@ -508,6 +508,6 @@ class BecadoControllers extends Controller
             abort(403);
         }
         $dpf = new BecadosReport();
-        $dpf->download("Lista Becados - Comedor UNCAus - " . now()->format('dd/mm/yy'));
+        $dpf->download("Lista Becados - Comedor UNCAus");
     }
 }
