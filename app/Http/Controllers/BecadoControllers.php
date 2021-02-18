@@ -403,9 +403,6 @@ class BecadoControllers extends Controller
     }
 
 
-
-
-
     public function deshabilitarBecado(  $id)
     {
         $res = new ApiMessage();
@@ -507,9 +504,10 @@ class BecadoControllers extends Controller
 
     public function exportListadoPDF(Request $request )
     {
-
+        if (!$request->hasValidSignature()) {
+            abort(403);
+        }
         $dpf = new BecadosReport();
         $dpf->download("Lista Becados - Comedor UNCAus - " . now()->format('dd/mm/yy'));
-
     }
 }
