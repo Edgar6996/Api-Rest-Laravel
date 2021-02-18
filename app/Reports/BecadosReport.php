@@ -121,8 +121,8 @@ class BecadosReport extends AppReportPdf
                 foreach ($this->lista as $p):?>
 
                     <tr >
-                        <td align="left"><?= $p->apellidos ?>, <?= $p->nombres ?></td>
-                        <td align="center"><?= $p->dni ?></td>
+                        <td width="130" align="left"><?= $p->apellidos ?>, <?= $p->nombres ?></td>
+                        <td width="30px" align="center"><?= $p->dni ?></td>
                         <td align="center"><?= $p->email ?></td>
                         <td align="center"><?= $p->telefono ?></td>
                         <td align="center"><?= ucwords(mb_strtolower($p->autorizado_por)) ?></td>
