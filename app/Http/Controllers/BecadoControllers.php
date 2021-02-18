@@ -504,7 +504,7 @@ class BecadoControllers extends Controller
 
     public function exportListadoPDF(Request $request )
     {
-        if (!$request->hasValidSignature()) {
+        if (\App::isProduction() && !$request->hasValidSignature()) {
             abort(403);
         }
         $dpf = new BecadosReport();
